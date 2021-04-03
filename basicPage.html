@@ -30,7 +30,6 @@
 </head>
 
 <body>
-
 	<!-- simple text heading-->
 	<h2>D3 Sandbox</h2>
 
@@ -41,20 +40,12 @@
 	</div>
 
 	<script> //start of JavaScript code
-		var dataPath = "data/ecoFootprint.csv";	// our data file
-
+		var dataPath = "data/*.csv";// our data file
 		d3.csv(dataPath)//loading our data
 			.then(function (myData) {
 				console.log(myData);
 			});
 
-
-
 	</script>
-
-
-
-
 </body>
-
 </html>
