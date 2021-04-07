@@ -7,19 +7,35 @@
 	<script src="https://d3js.org/d3.v5.js"></script>
 
 	<!--title of the webpage-->
-	<title>Illegal Cheetah Trade </title>
+	<title> D3 Tutorial </title>
 
 	<!-- for css -->
 	<!--specifies that our DIV and SVG elements takes the full width and height of the HTML window-->
 	<style>
 		div {
-			width: 100%;
-			height: 100%
+			width:
+				100%;
+			height:
+				100%
 		}
 
 		svg {
-			width: 100%;
-			height: 100%;
+			width:
+				100%;
+			height:
+				100%;
+		}
+
+		/*Pie chart text styling*/
+		.inside {
+			size: 25px;
+			fill: white;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.label {
+			size: 25px;
+			font-family: Arial, Helvetica, sans-serif;
 		}
 	</style>
 
@@ -27,21 +43,84 @@
 
 <body>
 	<!-- simple text heading-->
-	<h1>Illegal Cheetah Trade</h1>>
+	<h2>D3 Sandbox</h2>
 
-	<!--a new DIV element "myDiv" with a SVG element inside-->
+
+	<!--a new DIV element "myDiv" with a SVG element inside -->
 	<div id="myDiv">
 		<svg>
 		</svg>
 	</div>
 
+
+
 	<script> //start of JavaScript code
 		var dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv";// our data file
-		d3.csv(dataPath)//loading our data
+		d3.csv(dataPath)// loading our data
 			.then(function (myData) {
 				console.log(myData);
-			});
 
+				//Pie chart will be appended below other svg's
+				//Pie chart - Start https://www.youtube.com/watch?v=P8KNr0pDqio + https://www.youtube.com/watch?v=L5GXOdt2uOc&t
+				var width = 300, height = 250;
+				var colors = d3.scaleOrdinal(d3.schemeDark2);
+				var svg = d3.select("body").append("svg")
+					.attr("width", width).attr("height", height)
+					.style("background", "white")
+
+				//Variables holding incident type
+				var incident_type_trade = 1665;
+				var incident_type_transfer = 5;
+				var incident_type_seizure = 214;
+
+				//Allocating numbers to corresponding type
+				/*
+				for (let i = 0; i < myData.length; i++) {
+					if (myData[i]["Incident_Type"] == "possession/trade") {
+						incident_type_trade = incident_type_trade + 1;
+					} else if (myData[i]["Incident_Type"] == "possession/transfer") {
+						incident_type_transfer = incident_type_transfer + 1;
+					} else if (myData[i]["Incident_Type"] == "seizure") {
+						incident_type_seizure = incident_type_seizure + 1;
+					}
+				}
+				*/
+
+				var details_incident_type = [{ grade: "possession/trade", number: incident_type_trade },
+				{ grade: "possession/transfer", number: incident_type_transfer }, { grade: "seizure", number: incident_type_seizure }];
+				var data = d3.pie().sort(null).value(function (d) { return d.number; })(details_incident_type);
+
+				var segments = d3.arc()
+					.innerRadius(0)
+					.outerRadius(200)
+					.padAngle(.05)
+					.padRadius(50);
+
+				var sections = svg.append("g").attr("transform", "translate(250, 250)")
+					.selectAll("path").data(data);
+
+				sections.enter().append("path").attr("d", segments).attr("fill", function (d) { return colors(d.data.number); });
+
+				var content = d3.select("g").selectAll("text").data(data);
+				content.enter().append("text").classed("inside", true).each(function (d) {
+					var center = segments.centroid(d);
+					d3.select(this).attr("x", center[0]).attr("y", center[1])
+						.text(d.data.number);
+				})
+
+				var legends = svg.append("g").attr("transform", "translate(500,100)")
+					.selectAll(".legends").data(data);
+				var legend = legends.enter().append("g").classed("legends", true).attr("transform", function (d, i) { return "translate(0," + (i + 1) * 30 + ")"; });
+				legend.append("rect").attr("width", 20).attr("height", 20).attr("fill",
+					function (d) { return colors(d.data.number); });
+				legend.append("text").classed("label", true).text(function (d) { return d.data.grade; })
+					.attr("fill", function (d) { return colors(d.data.number); })
+					.attr("x", 30)
+					.attr("y", 20);
+				//Pie chart - End
+
+			});
 	</script>
 </body>
+
 </html>
