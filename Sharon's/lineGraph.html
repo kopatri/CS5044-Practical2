@@ -1,0 +1,113 @@
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<!-- we want to use D3, so this is where the D3 library version 5 gets called-->
+	<script src="https://d3js.org/d3.v5.js"></script>
+
+	<!--title of the webpage-->
+	<title>Illegal Cheetah Trade</title>
+
+	<!-- for css -->
+	<!--specifies that our DIV and SVG elements takes the full width and height of the HTML window-->
+	<style>
+		/*div {
+			width: 100%;
+			height: 100%
+		}
+
+		svg {
+			width: 100%;
+			height: 100%;
+		}*/
+		.line {
+			fill: none;
+			stroke-width: 1.5;
+		}
+	</style>
+
+</head>
+
+<body>
+	<!-- simple text heading-->
+	<h1>Illegal Cheetah Trade</h1>
+
+	<!--a new DIV element "myDiv" with a SVG element inside-->
+	<div id="line">	</div>
+
+	<script>
+		var dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; // our data file	
+
+		/* https://bl.ocks.org/d3noob/daecba427fed7c2d912d8abbe9f3e784 */
+		
+		var margin = {top: 20, right: 20, bottom: 30, left: 50},
+		width = 960 - margin.left - margin.right,
+		height = 500 - margin.top - margin.bottom;
+
+		// parse the date / time
+		var parseTime = d3.timeParse("%d-%b-%y");
+
+		// set the ranges
+		var x = d3.scaleTime().range([0, width]);
+		var y = d3.scaleLinear().range([height, 0]);
+
+		// define the 1st line
+		var valueline = d3.line()
+			.x(function(d) { return x(d.Incident_Date); })
+			.y(function(d) { return y(d.Died); });
+
+		// define the 2nd line
+		var valueline2 = d3.line()
+			.x(function(d) { return x(d.Incident_Date); })
+			.y(function(d) { return y(d.Alive); });
+
+		// append the svg obgect to the body of the page
+		// appends a 'group' element to 'svg'
+		// moves the 'group' element to the top left margin
+		var svg = d3.select("#line").append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+			.attr("transform",
+				"translate(" + margin.left + "," + margin.top + ")");
+
+		// Get the data
+		d3.csv(dataPath).then(function(data) {
+			// format the data
+			data.forEach(function(d) {
+				d.Incident_Date = parseTime(d.Incident_Date);
+			});
+
+			// Scale the range of the data
+			x.domain(d3.extent(data, function(d) { return d.Incident_Date; }));
+			y.domain([0, d3.max(data, function(d) {
+				return Math.max(d.Died, d.Alive); })]);
+
+			// Add the valueline path.
+			svg.append("path")
+				.data([data])
+				.attr("class", "line")
+				.style("stroke", "blue")
+				.attr("d", valueline);
+
+			// Add the valueline2 path.
+			svg.append("path")
+				.data([data])
+				.attr("class", "line")
+				.style("stroke", "red")
+				.attr("d", valueline2);
+
+			// Add the X Axis
+			svg.append("g")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x));
+
+			// Add the Y Axis
+			svg.append("g")
+				.call(d3.axisLeft(y));
+		});
+		
+	</script>
+</body>
+</html>
