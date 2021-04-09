@@ -58,7 +58,10 @@
 	<h2>Illegal Cheetahs</h2>
 
 	<!-- Create a div where the graph will take place -->
-	<div id="d3-container"></div>
+	<div id="d3-container-bar-region"></div>
+
+
+	<div id="d3-container-bar-medium"></div>
 
 
 
@@ -142,22 +145,21 @@
 				var region = d3.nest()
 					.key(function (d) { return d.region; })
 					.entries(myData);
-				console.log(region);
 				const data_bar = d3.nest()
 					.key(function (d) { return d.region; })
 					.rollup(function (v) { return v.length; })
 					.entries(myData);
-				console.log(JSON.stringify(data_bar));
 
 				const width_bar = 900;
 				const height_bar = 450;
 				const margin = { top: 50, bottom: 50, left: 50, right: 50 };
 
-				const svg2 = d3.select('#d3-container')
+				const svg = d3.select('#d3-container-bar-region')
 					.append('svg')
 					.attr('width', width_bar - margin.left - margin.right)
 					.attr('height', height_bar - margin.top - margin.bottom)
 					.attr("viewBox", [0, 0, width_bar, height_bar]);
+					
 
 				const x = d3.scaleBand()
 					.domain(d3.range(data_bar.length))
@@ -168,7 +170,7 @@
 					.domain([0, 1600])
 					.range([height_bar - margin.bottom, margin.top])
 
-				svg2
+				svg
 					.append("g")
 					.attr("fill", 'red')
 					.selectAll("rect")
@@ -193,9 +195,9 @@
 						.attr("font-size", '20px')
 				}
 
-				svg2.append("g").call(xAxis);
-				svg2.append("g").call(yAxis);
-				svg2.node();
+				svg.append("g").call(xAxis);
+				svg.append("g").call(yAxis);
+				svg.node();
 				/*Bar Chart - End*/
 
 			});
