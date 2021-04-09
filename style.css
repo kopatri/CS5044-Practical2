@@ -1,16 +1,44 @@
-/*#visualisation {
+/* General Styling */
+
+/*
+#visualisation {
     display: flex;
 }*/
 
-/* Styling for line chart */
+.axis-label {
+    color: darkslategray;
+}
+
+.tooltip {
+    position: absolute;			
+    text-align: center;		
+    line-height:25px;	
+    width: 100px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;	
+}
+
+/* Line Chart Styling */
 .line {
     fill: none;
     stroke-width: 1.5;
 }
 
-/* Line chart styling -end */
+.area {
+    opacity: 0.8;
+}
 
-/*Pie chart styling - Start*/
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Pie Chart Styling */
 .inside {
     size: 25px;
     fill: white;
@@ -22,11 +50,7 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/*Pie chart styling - End*/
-
-/*Bar chart styling - Start */
+/* Bar Chart Styling */
 .rect:hover {
     opacity: 0.5;
 }
-
-/*Bar chart styling - End */

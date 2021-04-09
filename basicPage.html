@@ -17,7 +17,7 @@
 	<h1>Illegal Cheetah Trade</h1>
 
 	<!-- Create a div where the graph will take place -->
-	<div id = "visualisation">
+	<div id="visualisation">
 		<div id="bar_region"></div>
 		<div id="line"> </div>
 	</div>
@@ -27,6 +27,12 @@
 
 		// parse the date / time
 		var parseTime = d3.timeParse("%d-%b-%y");
+
+		// Create the tooltip
+		var tooltip = d3.select("body")
+			.append("div")
+			.attr("class", "tooltip")
+			.style("opacity", 0);
 
 		// Get the data
 		d3.csv(dataPath).then(function (data) {
@@ -49,16 +55,15 @@
 				.rollup(function (v) { return v.length; })
 				.entries(data);
 
-			const width_bar = 900;
-			const height_bar = 600;
-			const margin_bar = { top: 50, bottom: 50, left: 50, right: 50 };
+			const margin_bar = { top: 10, right: 40, bottom: 60, left: 40 };
+			const width_bar = 850;
+			const height_bar = 400;
 
 			const bar_svg = d3.select('#bar_region')
 				.append('svg')
 				.attr('width', width_bar - margin_bar.left - margin_bar.right)
 				.attr('height', height_bar - margin_bar.top - margin_bar.bottom)
 				.attr("viewBox", [0, 0, width_bar, height_bar]);
-
 
 			const bar_x = d3.scaleBand()
 				.domain(d3.range(data_bar.length))
@@ -74,12 +79,45 @@
 				.selectAll("rect")
 				.data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
 				.join("rect")
+				.on('mouseover', d => {
+					tooltip.style('opacity', 0.9)
+						.html(d.value + " incidents")
+						.style('left', d3.event.pageX + 'px')
+						.style('top', d3.event.pageY + 5 + 'px');
+				})
+				.on('mouseout', () => {
+					tooltip.style('opacity', 0)
+				})
 				.attr("x", (d, i) => bar_x(i))
 				.attr("y", d => bar_y(d.value))
 				.attr('title', (d) => d.value)
 				.attr("class", "rect")
 				.attr("height", d => bar_y(0) - bar_y(d.value))
 				.attr("width", bar_x.bandwidth());
+
+			//Add label for x axis
+			bar_svg.append("text")
+				.attr("class", "x label")
+				.attr("text-anchor", "middle")
+				.attr("x", (width_bar) / 2)
+				.attr("y", (height_bar + margin_bar.top - 20))
+				.text("Region by continent");
+
+			//Add label for y axis
+			bar_svg.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 0 - margin_bar.left)
+				.attr("x", 0 - (height_bar / 2))
+				.attr("dy", "1em")
+				.attr("text-anchor", "middle")
+				.text("Incidents")
+
+			//Add title for visualization
+			bar_svg.append("h1")
+				.attr("x", (width_bar) / 2)
+				.attr("y", (height_bar + margin_bar.top + 20))
+				.attr("text-anchor", "middle")
+				.text("Title");
 
 			function yAxis(g) {
 				g.attr("transform", `translate(${margin_bar.left}, 0)`)
@@ -91,30 +129,32 @@
 				g.attr("transform", `translate(0,${height_bar - margin_bar.bottom})`)
 					.call(d3.axisBottom(bar_x).tickFormat(i => data_bar[i].key))
 					.attr("font-size", '20px')
+
 			}
 
-			bar_svg.append("g").call(xAxis);
-			bar_svg.append("g").call(yAxis);
+
+			bar_svg.append("g")
+				.call(xAxis);
+			bar_svg.append("g")
+				.call(yAxis);
+
+
 			bar_svg.node();
 			/*Bar Chart - End*/
 
 
 			/* Line Graph - https://bl.ocks.org/d3noob/daecba427fed7c2d912d8abbe9f3e784 */
-			
+
 			var margin_line = { top: 20, right: 20, bottom: 30, left: 50 },
 				width_line = 960 - margin_line.left - margin_line.right,
 				height_line = 500 - margin_line.top - margin_line.bottom;
 
-			// define a line (for each data point not grouped)
-			/*var valueline = d3.line()
-				.defined(function(d) { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing them as 0
-				.x(function(d) { return x(d.Incident_Date); })
-				.y(function(d) { return y(d.Cheetahs_Number); });*/
-
 			// append the svg obgect to the body of the page
 			// appends a 'group' element to 'svg'
 			// moves the 'group' element to the top left margin
-			var line_svg = d3.select("#line").append("svg")
+			var line_svg = d3.select("#line")
+				.append("svg")
+				.attr("id", "line-svg")
 				.attr("width", width_line + margin_line.left + margin_line.right)
 				.attr("height", height_line + margin_line.top + margin_line.bottom)
 				.append("g")
@@ -125,30 +165,31 @@
 				.key(d => { return d3.timeMonth(d.Incident_Date); })
 				.rollup(value => { return d3.sum(value, d => { return d.Cheetahs_Number; }); })
 				.entries(data);
-			console.log(Cheetahs_NumberTotal)
+			console.log(Cheetahs_NumberTotal);
 
 			var DiedTotal = d3.nest()
 				.key(d => { return d3.timeMonth(d.Incident_Date); })
 				.rollup(value => { return d3.sum(value, d => { return d.Died; }); })
 				.entries(data);
-			console.log(DiedTotal)
+			console.log(DiedTotal);
 
 			var AliveTotal = d3.nest()
 				.key(d => { return d3.timeMonth(d.Incident_Date); })
 				.rollup(value => { return d3.sum(value, d => { return d.Alive; }); })
 				.entries(data);
-			console.log(AliveTotal)
+			console.log(AliveTotal);
 
-			// set the ranges for the data
-			var x = d3.scaleTime().range([0, width_line]);
-			var y = d3.scaleLinear().range([height_line, 0]);
+			// Set the ranges for the data
+			var x = d3.scaleTime()
+				.range([0, width_line])
+				.domain(d3.extent(data, d => { return d.Incident_Date; }));
 
-			// Scale the range of the data
-			x.domain(d3.extent(data, function (d) { return d.Incident_Date; }));
-			y.domain([0, d3.max(Cheetahs_NumberTotal, function (d) { return d.value; })]);
+			var y = d3.scaleLinear()
+				.range([height_line, 0])
+				.domain([0, d3.max(Cheetahs_NumberTotal, d => { return d.value; })]);
 
 			// Create the line
-			var valueline4 = d3.line()
+			var totalLine = d3.line()
 				//.defined(function(d) { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing them as 0
 				.x(function (d) { return x(new Date(d.key)); })
 				.y(function (d) { return y(d.value); });
@@ -159,25 +200,39 @@
 				.y1(d => { return y(d.value); })
 				.y0(d => { return y.range()[0]; })
 
-
-			/*// Add the valueline (not grouped) path.
-			svg.append("path")
-				.data([data])
-				.attr("class", "line")
-				.style("stroke", "blue")
-				.attr("d", valueline);*/
-
 			// Draw the line for total number of Cheetahs found
 			line_svg.append("path")
 				.data([Cheetahs_NumberTotal])
 				.attr("class", "line")
 				.style("stroke", "black")
-				.attr("d", valueline4);
+				.attr("d", totalLine);
+
+			// Add circles on each data point on the line
+			line_svg.selectAll("circle")
+				.data(Cheetahs_NumberTotal)
+				.enter()
+				.append("circle")
+				.attr("fill", "black")
+				.attr("stroke", "none")
+				.attr("cx", function (d) { return x(new Date(d.key)) })
+				.attr("cy", function (d) { return y(d.value) })
+				.attr("r", 3)
+				.on('mouseover', d => {
+					const dateFormat = d3.timeFormat("%b-%Y");
+
+					tooltip.style('opacity', 0.9)
+						.html(dateFormat(new Date(d.key)) + '<br/> #Cheetahs: ' + d.value)
+						.style('left', d3.event.pageX + 'px')
+						.style('top', d3.event.pageY + 5 + 'px');
+				})
+				.on('mouseout', () => {
+					tooltip.style('opacity', 0);
+				});
 
 			// Draw the areas for total number found dead and alive
 			line_svg.append("path")
 				.data([DiedTotal])
-				.attr("class", "line")
+				.attr("class", "area")
 				.style("stroke", "red")
 				.style("fill", "red")
 				.attr("d", area);
@@ -197,6 +252,48 @@
 			// Draw the Y Axis
 			line_svg.append("g")
 				.call(d3.axisLeft(y));
+
+			// Add axis labels
+			line_svg.append("text")
+				.attr("class", "axis-label")
+				.attr("x", (width_line) / 2)
+				.attr("y", height_line + margin_line.bottom)
+				.style("text-anchor", "middle")
+				.text("Incident Date");
+
+			line_svg.append("text")
+				.attr("class", "axis-label")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 0 - margin_line.left)
+				.attr("x", 0 - (height_line / 2))
+				.attr("dy", "1em")
+				.style("text-anchor", "middle")
+				.text("Number of Cheetahs");
+			var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+			// Add legends						
+			line_svg.append("text")
+				.attr("x", width_line - margin_line.left - 120)
+				.attr("y", margin_line.top + 10)
+				.attr("class", "legend")
+				.style("fill", "black")
+				.text("Number of Cheetahs Found");
+
+			line_svg.append("text")
+				.attr("x", width_line - margin_line.left - 35)
+				.attr("y", margin_line.top + 30)
+				.attr("class", "legend")
+				.style("fill", "blue")
+				.text("Reported Alive");
+
+			line_svg.append("text")
+				.attr("x", width_line - margin_line.left - 35)
+				.attr("y", margin_line.top + 50)
+				.attr("class", "legend")
+				.style("fill", "red")
+				.text("Reported Died");
+
+
 		});
 
 	</script>
