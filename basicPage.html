@@ -78,79 +78,76 @@
 
 				//Pie chart will be appended below other svg's
 				//Pie chart - Start https://www.youtube.com/watch?v=P8KNr0pDqio + https://www.youtube.com/watch?v=L5GXOdt2uOc&t
-				var width = 300, height = 250;
-				var colors = d3.scaleOrdinal(d3.schemeDark2);
-				var svg = d3.select("body").append("svg")
-					.attr("width", width).attr("height", height)
-					.style("background", "white")
+				// var width = 300, height = 250;
+				// var colors = d3.scaleOrdinal(d3.schemeDark2);
+				// var svg = d3.select("body").append("svg")
+				// 	.attr("width", width).attr("height", height)
+				// 	.style("background", "white")
 
-				//Variables holding incident type
-				var incident_type_trade = 1665;
-				var incident_type_transfer = 5;
-				var incident_type_seizure = 214;
+				// //Variables holding incident type
+				// var incident_type_trade = 1665;
+				// var incident_type_transfer = 5;
+				// var incident_type_seizure = 214;
 
-				//Allocating numbers to corresponding type
-				/*
-				for (let i = 0; i < myData.length; i++) {
-					if (myData[i]["Incident_Type"] == "possession/trade") {
-						incident_type_trade = incident_type_trade + 1;
-					} else if (myData[i]["Incident_Type"] == "possession/transfer") {
-						incident_type_transfer = incident_type_transfer + 1;
-					} else if (myData[i]["Incident_Type"] == "seizure") {
-						incident_type_seizure = incident_type_seizure + 1;
-					}
-				}
-				*/
+				// //Allocating numbers to corresponding type
+				// /*
+				// for (let i = 0; i < myData.length; i++) {
+				// 	if (myData[i]["Incident_Type"] == "possession/trade") {
+				// 		incident_type_trade = incident_type_trade + 1;
+				// 	} else if (myData[i]["Incident_Type"] == "possession/transfer") {
+				// 		incident_type_transfer = incident_type_transfer + 1;
+				// 	} else if (myData[i]["Incident_Type"] == "seizure") {
+				// 		incident_type_seizure = incident_type_seizure + 1;
+				// 	}
+				// }
+				// */
 
-				var details_incident_type = [{ grade: "possession/trade", number: incident_type_trade },
-				{ grade: "possession/transfer", number: incident_type_transfer }, { grade: "seizure", number: incident_type_seizure }];
-				var data = d3.pie().sort(null).value(function (d) { return d.number; })(details_incident_type);
+				// var details_incident_type = [{ grade: "possession/trade", number: incident_type_trade },
+				// { grade: "possession/transfer", number: incident_type_transfer }, { grade: "seizure", number: incident_type_seizure }];
+				// var data = d3.pie().sort(null).value(function (d) { return d.number; })(details_incident_type);
 
-				var segments = d3.arc()
-					.innerRadius(0)
-					.outerRadius(200)
-					.padAngle(.05)
-					.padRadius(50);
+				// var segments = d3.arc()
+				// 	.innerRadius(0)
+				// 	.outerRadius(200)
+				// 	.padAngle(.05)
+				// 	.padRadius(50);
 
-				var sections = svg.append("g").attr("transform", "translate(250, 250)")
-					.selectAll("path").data(data);
+				// var sections = svg.append("g").attr("transform", "translate(250, 250)")
+				// 	.selectAll("path").data(data);
 
-				sections.enter().append("path").attr("d", segments).attr("fill", function (d) { return colors(d.data.number); });
+				// sections.enter().append("path").attr("d", segments).attr("fill", function (d) { return colors(d.data.number); });
 
-				var content = d3.select("g").selectAll("text").data(data);
-				content.enter().append("text").classed("inside", true).each(function (d) {
-					var center = segments.centroid(d);
-					d3.select(this).attr("x", center[0]).attr("y", center[1])
-						.text(d.data.number);
-				})
+				// var content = d3.select("g").selectAll("text").data(data);
+				// content.enter().append("text").classed("inside", true).each(function (d) {
+				// 	var center = segments.centroid(d);
+				// 	d3.select(this).attr("x", center[0]).attr("y", center[1])
+				// 		.text(d.data.number);
+				// })
 
-				var legends = svg.append("g").attr("transform", "translate(500,100)")
-					.selectAll(".legends").data(data);
-				var legend = legends.enter().append("g").classed("legends", true).attr("transform", function (d, i) { return "translate(0," + (i + 1) * 30 + ")"; });
-				legend.append("rect").attr("width", 20).attr("height", 20).attr("fill",
-					function (d) { return colors(d.data.number); });
-				legend.append("text").classed("label", true).text(function (d) { return d.data.grade; })
-					.attr("fill", function (d) { return colors(d.data.number); })
-					.attr("x", 30)
-					.attr("y", 20);
+				// var legends = svg.append("g").attr("transform", "translate(500,100)")
+				// 	.selectAll(".legends").data(data);
+				// var legend = legends.enter().append("g").classed("legends", true).attr("transform", function (d, i) { return "translate(0," + (i + 1) * 30 + ")"; });
+				// legend.append("rect").attr("width", 20).attr("height", 20).attr("fill",
+				// 	function (d) { return colors(d.data.number); });
+				// legend.append("text").classed("label", true).text(function (d) { return d.data.grade; })
+				// 	.attr("fill", function (d) { return colors(d.data.number); })
+				// 	.attr("x", 30)
+				// 	.attr("y", 20);
 				//Pie chart - End
 
 
 				/*Bar Chart - Start- https://github.com/kriscfoster/d3-barchart*/
 
-				//create grouped data by region type
-				// var nested_data = d3.nest()
-				// 	.key(function (d) { return d.status; })
-				// 	.entries(csv_data);
-
-				const data_bar = [
-					{ name: 'Africa', score: 311 },
-					{ name: 'Asia', score: 17 },
-					{ name: 'Europe', score: 31 },
-					{ name: 'Middle East', score: 1515 },
-					{ name: 'North America', score: 9 },
-					{ name: 'Oceania', score: 1 }
-				];
+				//Connecting CSV with D3
+				var region = d3.nest()
+					.key(function (d) { return d.region; })
+					.entries(myData);
+				console.log(region);
+				const data_bar = d3.nest()
+					.key(function (d) { return d.region; })
+					.rollup(function (v) { return v.length; })
+					.entries(myData);
+				console.log(JSON.stringify(data_bar));
 
 				const width_bar = 900;
 				const height_bar = 450;
@@ -175,13 +172,13 @@
 					.append("g")
 					.attr("fill", 'red')
 					.selectAll("rect")
-					.data(data_bar.sort((a, b) => d3.descending(a.score, b.score)))
+					.data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
 					.join("rect")
 					.attr("x", (d, i) => x(i))
-					.attr("y", d => y(d.score))
-					.attr('title', (d) => d.score)
+					.attr("y", d => y(d.value))
+					.attr('title', (d) => d.value)
 					.attr("class", "rect")
-					.attr("height", d => y(0) - y(d.score))
+					.attr("height", d => y(0) - y(d.value))
 					.attr("width", x.bandwidth());
 
 				function yAxis(g) {
@@ -192,7 +189,7 @@
 
 				function xAxis(g) {
 					g.attr("transform", `translate(0,${height_bar - margin.bottom})`)
-						.call(d3.axisBottom(x).tickFormat(i => data_bar[i].name))
+						.call(d3.axisBottom(x).tickFormat(i => data_bar[i].key))
 						.attr("font-size", '20px')
 				}
 
@@ -202,6 +199,11 @@
 				/*Bar Chart - End*/
 
 			});
+
+
+
+
+
 	</script>
 
 	<script>
