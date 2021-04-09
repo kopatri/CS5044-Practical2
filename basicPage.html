@@ -5,210 +5,199 @@
 
 	<!-- we want to use D3, so this is where the D3 library version 5 gets called-->
 	<script src="https://d3js.org/d3.v5.js"></script>
-
-	<!--Bootstrap CSS-->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link href="style.css" rel="stylesheet">
 
 	<!--title of the webpage-->
-	<title> Illegal Cheetahs </title>
-
-	<!-- for css -->
-	<!--specifies that our DIV and SVG elements takes the full width and height of the HTML window-->
-	<style>
-		div {
-			width:
-				100%;
-			height:
-				100%
-		}
-
-		svg {
-			width:
-				100%;
-			height:
-				100%;
-		}
-
-		/*Pie chart styling - Start*/
-		.inside {
-			size: 25px;
-			fill: white;
-			font-family: Arial, Helvetica, sans-serif;
-		}
-
-		.label {
-			size: 25px;
-			font-family: Arial, Helvetica, sans-serif;
-		}
-
-		/*Pie chart styling - End*/
-		/*Bar chart styling - Start */
-		.rect:hover {
-			opacity: 0.5;
-		}
-
-		/*Bar chart styling - End */
-	</style>
+	<title>Illegal Cheetah Trade</title>
 
 </head>
 
 <body>
 	<!-- simple text heading-->
-	<h2>Illegal Cheetahs</h2>
+	<h1>Illegal Cheetah Trade</h1>
 
 	<!-- Create a div where the graph will take place -->
-	<div id="d3-container-bar-region"></div>
-
-
-	<div id="d3-container-bar-medium"></div>
-
-
-
-	<!--a new DIV element "myDiv" with a SVG element inside 
-	<div id="myDiv">
-		<svg>
-		</svg>
+	<div id = "visualisation">
+		<div id="bar_region"></div>
+		<div id="line"> </div>
 	</div>
--->
-
-
-	<script> //start of JavaScript code
-		var dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv";// our data file
-		d3.csv(dataPath)// loading our data
-			.then(function (myData) {
-				console.log(myData);
-
-				//Pie chart will be appended below other svg's
-				//Pie chart - Start https://www.youtube.com/watch?v=P8KNr0pDqio + https://www.youtube.com/watch?v=L5GXOdt2uOc&t
-				// var width = 300, height = 250;
-				// var colors = d3.scaleOrdinal(d3.schemeDark2);
-				// var svg = d3.select("body").append("svg")
-				// 	.attr("width", width).attr("height", height)
-				// 	.style("background", "white")
-
-				// //Variables holding incident type
-				// var incident_type_trade = 1665;
-				// var incident_type_transfer = 5;
-				// var incident_type_seizure = 214;
-
-				// //Allocating numbers to corresponding type
-				// /*
-				// for (let i = 0; i < myData.length; i++) {
-				// 	if (myData[i]["Incident_Type"] == "possession/trade") {
-				// 		incident_type_trade = incident_type_trade + 1;
-				// 	} else if (myData[i]["Incident_Type"] == "possession/transfer") {
-				// 		incident_type_transfer = incident_type_transfer + 1;
-				// 	} else if (myData[i]["Incident_Type"] == "seizure") {
-				// 		incident_type_seizure = incident_type_seizure + 1;
-				// 	}
-				// }
-				// */
-
-				// var details_incident_type = [{ grade: "possession/trade", number: incident_type_trade },
-				// { grade: "possession/transfer", number: incident_type_transfer }, { grade: "seizure", number: incident_type_seizure }];
-				// var data = d3.pie().sort(null).value(function (d) { return d.number; })(details_incident_type);
-
-				// var segments = d3.arc()
-				// 	.innerRadius(0)
-				// 	.outerRadius(200)
-				// 	.padAngle(.05)
-				// 	.padRadius(50);
-
-				// var sections = svg.append("g").attr("transform", "translate(250, 250)")
-				// 	.selectAll("path").data(data);
-
-				// sections.enter().append("path").attr("d", segments).attr("fill", function (d) { return colors(d.data.number); });
-
-				// var content = d3.select("g").selectAll("text").data(data);
-				// content.enter().append("text").classed("inside", true).each(function (d) {
-				// 	var center = segments.centroid(d);
-				// 	d3.select(this).attr("x", center[0]).attr("y", center[1])
-				// 		.text(d.data.number);
-				// })
-
-				// var legends = svg.append("g").attr("transform", "translate(500,100)")
-				// 	.selectAll(".legends").data(data);
-				// var legend = legends.enter().append("g").classed("legends", true).attr("transform", function (d, i) { return "translate(0," + (i + 1) * 30 + ")"; });
-				// legend.append("rect").attr("width", 20).attr("height", 20).attr("fill",
-				// 	function (d) { return colors(d.data.number); });
-				// legend.append("text").classed("label", true).text(function (d) { return d.data.grade; })
-				// 	.attr("fill", function (d) { return colors(d.data.number); })
-				// 	.attr("x", 30)
-				// 	.attr("y", 20);
-				//Pie chart - End
-
-
-				/*Bar Chart - Start- https://github.com/kriscfoster/d3-barchart*/
-
-				//Connecting CSV with D3
-				var region = d3.nest()
-					.key(function (d) { return d.region; })
-					.entries(myData);
-				const data_bar = d3.nest()
-					.key(function (d) { return d.region; })
-					.rollup(function (v) { return v.length; })
-					.entries(myData);
-
-				const width_bar = 900;
-				const height_bar = 450;
-				const margin = { top: 50, bottom: 50, left: 50, right: 50 };
-
-				const svg = d3.select('#d3-container-bar-region')
-					.append('svg')
-					.attr('width', width_bar - margin.left - margin.right)
-					.attr('height', height_bar - margin.top - margin.bottom)
-					.attr("viewBox", [0, 0, width_bar, height_bar]);
-					
-
-				const x = d3.scaleBand()
-					.domain(d3.range(data_bar.length))
-					.range([margin.left, width_bar - margin.right])
-					.padding(0.1)
-
-				const y = d3.scaleLinear()
-					.domain([0, 1600])
-					.range([height_bar - margin.bottom, margin.top])
-
-				svg
-					.append("g")
-					.attr("fill", 'red')
-					.selectAll("rect")
-					.data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
-					.join("rect")
-					.attr("x", (d, i) => x(i))
-					.attr("y", d => y(d.value))
-					.attr('title', (d) => d.value)
-					.attr("class", "rect")
-					.attr("height", d => y(0) - y(d.value))
-					.attr("width", x.bandwidth());
-
-				function yAxis(g) {
-					g.attr("transform", `translate(${margin.left}, 0)`)
-						.call(d3.axisLeft(y).ticks(null, data_bar.format))
-						.attr("font-size", '20px')
-				}
-
-				function xAxis(g) {
-					g.attr("transform", `translate(0,${height_bar - margin.bottom})`)
-						.call(d3.axisBottom(x).tickFormat(i => data_bar[i].key))
-						.attr("font-size", '20px')
-				}
-
-				svg.append("g").call(xAxis);
-				svg.append("g").call(yAxis);
-				svg.node();
-				/*Bar Chart - End*/
-
-			});
-
-
-
-
-
-	</script>
 
 	<script>
+		var dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; // our data file	
+
+		// parse the date / time
+		var parseTime = d3.timeParse("%d-%b-%y");
+
+		// Get the data
+		d3.csv(dataPath).then(function (data) {
+			// format the data
+			data.forEach(function (d) {
+				d.Incident_Date = parseTime(d.Incident_Date); //Change to Date
+				d.Cheetahs_Number = +d.Cheetahs_Number; //change to int
+				d.Cheetahs_Number = isNaN(d.Cheetahs_Number) ? null : d.Cheetahs_Number; // Change to null if it's not an integer
+				d.Alive = +d.Alive;
+				d.Alive = isNaN(d.Alive) ? null : d.Alive;
+				d.Died = +d.Died;
+				d.Died = isNaN(d.Died) ? null : d.Died;
+			});
+
+			/*Bar Chart - Start- https://github.com/kriscfoster/d3-barchart*/
+
+			// Group and count instances by region 
+			const data_bar = d3.nest()
+				.key(function (d) { return d.Region; })
+				.rollup(function (v) { return v.length; })
+				.entries(data);
+
+			const width_bar = 900;
+			const height_bar = 600;
+			const margin_bar = { top: 50, bottom: 50, left: 50, right: 50 };
+
+			const bar_svg = d3.select('#bar_region')
+				.append('svg')
+				.attr('width', width_bar - margin_bar.left - margin_bar.right)
+				.attr('height', height_bar - margin_bar.top - margin_bar.bottom)
+				.attr("viewBox", [0, 0, width_bar, height_bar]);
+
+
+			const bar_x = d3.scaleBand()
+				.domain(d3.range(data_bar.length))
+				.range([margin_bar.left, width_bar - margin_bar.right])
+				.padding(0.1)
+
+			const bar_y = d3.scaleLinear()
+				.domain([0, d3.max(data_bar, function (d) { return d.value; })])
+				.range([height_bar - margin_bar.bottom, margin_bar.top])
+
+			bar_svg.append("g")
+				.attr("fill", 'green')
+				.selectAll("rect")
+				.data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
+				.join("rect")
+				.attr("x", (d, i) => bar_x(i))
+				.attr("y", d => bar_y(d.value))
+				.attr('title', (d) => d.value)
+				.attr("class", "rect")
+				.attr("height", d => bar_y(0) - bar_y(d.value))
+				.attr("width", bar_x.bandwidth());
+
+			function yAxis(g) {
+				g.attr("transform", `translate(${margin_bar.left}, 0)`)
+					.call(d3.axisLeft(bar_y).ticks(null, data_bar.format))
+					.attr("font-size", '20px')
+			}
+
+			function xAxis(g) {
+				g.attr("transform", `translate(0,${height_bar - margin_bar.bottom})`)
+					.call(d3.axisBottom(bar_x).tickFormat(i => data_bar[i].key))
+					.attr("font-size", '20px')
+			}
+
+			bar_svg.append("g").call(xAxis);
+			bar_svg.append("g").call(yAxis);
+			bar_svg.node();
+			/*Bar Chart - End*/
+
+
+			/* Line Graph - https://bl.ocks.org/d3noob/daecba427fed7c2d912d8abbe9f3e784 */
+			
+			var margin_line = { top: 20, right: 20, bottom: 30, left: 50 },
+				width_line = 960 - margin_line.left - margin_line.right,
+				height_line = 500 - margin_line.top - margin_line.bottom;
+
+			// define a line (for each data point not grouped)
+			/*var valueline = d3.line()
+				.defined(function(d) { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing them as 0
+				.x(function(d) { return x(d.Incident_Date); })
+				.y(function(d) { return y(d.Cheetahs_Number); });*/
+
+			// append the svg obgect to the body of the page
+			// appends a 'group' element to 'svg'
+			// moves the 'group' element to the top left margin
+			var line_svg = d3.select("#line").append("svg")
+				.attr("width", width_line + margin_line.left + margin_line.right)
+				.attr("height", height_line + margin_line.top + margin_line.bottom)
+				.append("g")
+				.attr("transform", "translate(" + margin_line.left + "," + margin_line.top + ")");
+
+			// Group by month
+			var Cheetahs_NumberTotal = d3.nest()
+				.key(d => { return d3.timeMonth(d.Incident_Date); })
+				.rollup(value => { return d3.sum(value, d => { return d.Cheetahs_Number; }); })
+				.entries(data);
+			console.log(Cheetahs_NumberTotal)
+
+			var DiedTotal = d3.nest()
+				.key(d => { return d3.timeMonth(d.Incident_Date); })
+				.rollup(value => { return d3.sum(value, d => { return d.Died; }); })
+				.entries(data);
+			console.log(DiedTotal)
+
+			var AliveTotal = d3.nest()
+				.key(d => { return d3.timeMonth(d.Incident_Date); })
+				.rollup(value => { return d3.sum(value, d => { return d.Alive; }); })
+				.entries(data);
+			console.log(AliveTotal)
+
+			// set the ranges for the data
+			var x = d3.scaleTime().range([0, width_line]);
+			var y = d3.scaleLinear().range([height_line, 0]);
+
+			// Scale the range of the data
+			x.domain(d3.extent(data, function (d) { return d.Incident_Date; }));
+			y.domain([0, d3.max(Cheetahs_NumberTotal, function (d) { return d.value; })]);
+
+			// Create the line
+			var valueline4 = d3.line()
+				//.defined(function(d) { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing them as 0
+				.x(function (d) { return x(new Date(d.key)); })
+				.y(function (d) { return y(d.value); });
+
+			// Create the area
+			var area = d3.area()
+				.x(d => { return x(new Date(d.key)); })
+				.y1(d => { return y(d.value); })
+				.y0(d => { return y.range()[0]; })
+
+
+			/*// Add the valueline (not grouped) path.
+			svg.append("path")
+				.data([data])
+				.attr("class", "line")
+				.style("stroke", "blue")
+				.attr("d", valueline);*/
+
+			// Draw the line for total number of Cheetahs found
+			line_svg.append("path")
+				.data([Cheetahs_NumberTotal])
+				.attr("class", "line")
+				.style("stroke", "black")
+				.attr("d", valueline4);
+
+			// Draw the areas for total number found dead and alive
+			line_svg.append("path")
+				.data([DiedTotal])
+				.attr("class", "line")
+				.style("stroke", "red")
+				.style("fill", "red")
+				.attr("d", area);
+
+			line_svg.append("path")
+				.data([AliveTotal])
+				.attr("class", "area")
+				.style("stroke", "blue")
+				.style("fill", "blue")
+				.attr("d", area);
+
+			// Draw the X Axis
+			line_svg.append("g")
+				.attr("transform", "translate(0," + height_line + ")")
+				.call(d3.axisBottom(x));
+
+			// Draw the Y Axis
+			line_svg.append("g")
+				.call(d3.axisLeft(y));
+		});
 
 	</script>
 </body>

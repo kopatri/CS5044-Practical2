@@ -1,0 +1,32 @@
+/*#visualisation {
+    display: flex;
+}*/
+
+/* Styling for line chart */
+.line {
+    fill: none;
+    stroke-width: 1.5;
+}
+
+/* Line chart styling -end */
+
+/*Pie chart styling - Start*/
+.inside {
+    size: 25px;
+    fill: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.label {
+    size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*Pie chart styling - End*/
+
+/*Bar chart styling - Start */
+.rect:hover {
+    opacity: 0.5;
+}
+
+/*Bar chart styling - End */
