@@ -19,6 +19,7 @@
 	<!-- Create a div where the graph will take place -->
 	<div id="visualisation">
 		<div id="bar_region"></div>
+		<div id="lollipop"></div>
 		<div id="line"> </div>
 	</div>
 
@@ -132,15 +133,78 @@
 
 			}
 
-
-			bar_svg.append("g")
-				.call(xAxis);
-			bar_svg.append("g")
-				.call(yAxis);
-
+			bar_svg.append("g").call(xAxis);
+			bar_svg.append("g").call(yAxis);
 
 			bar_svg.node();
-			/*Bar Chart - End*/
+			/* Bar Chart - End*/
+
+			/* Lollipop Chart - Start */
+			var margin_lol = { top: 10, right: 30, bottom: 90, left: 40 },
+				width_lol = 450 - margin_lol.left - margin_lol.right,
+				height_lol = 500 - margin_lol.top - margin_lol.bottom;
+
+			const Medium = ["Social Media", "eCommerce", "Email", "Phone App", "Web site", "Others"];
+			const others = [];
+
+			const nestedMedium = d3.nest()
+				.key(function (d) { 
+					if (Medium.includes(d.Medium)) {return d.Medium; }
+					else {
+						if (!others.includes(d.Medium)) others.push(d.Medium); 
+						return "Others";
+					}
+				})
+				.rollup(function (v) { return v.length; })
+				.entries(data);
+			console.log(nestedMedium);
+			console.log(others);
+
+			// append the svg object to the body of the page
+			var lol_svg = d3.select("#lollipop")
+				.append("svg")
+				.attr("width", width_lol + margin_lol.left + margin_lol.right)
+				.attr("height", height_lol + margin_lol.top + margin_lol.bottom)
+				.append("g")
+				.attr("transform", "translate(" + margin_lol.left + "," + margin_lol.top + ")");
+
+			// X axis
+			var lol_x = d3.scaleBand()
+				.range([0, width_lol])
+				.domain(Medium)//data.map(function (d) { return d.Medium; }))
+				.padding(1);
+
+			lol_svg.append("g")
+				.attr("transform", "translate(0," + height_lol + ")")
+				.call(d3.axisBottom(lol_x))
+				.selectAll("text")
+				.attr("transform", "translate(-10,0)rotate(-45)")
+				.style("text-anchor", "end");
+
+			// Add Y axis
+			var lol_y = d3.scaleLinear()
+				.domain([0, d3.max(nestedMedium, function (d) { return d.value; })])
+				.range([height_lol, 0]);
+
+			lol_svg.append("g")
+				.call(d3.axisLeft(lol_y));
+
+			// Draw Lines
+			lol_svg.selectAll("lines")
+				.data(nestedMedium)
+				.enter()
+				.append("line")
+				.attr("x1", function (d) { return lol_x(d.key); })
+				.attr("x2", function (d) { return lol_x(d.key); })
+				.attr("y1", function (d) { return lol_y(d.value); })
+				.attr("y2", lol_y(0))
+				.attr("stroke", "purple");
+			
+
+				// Add circles (check how it looks with all media instead of grouped)
+				// Style the line graph
+				// Axis labels
+			/* Lollipop Chart - End */
 
 
 			/* Line Graph - https://bl.ocks.org/d3noob/daecba427fed7c2d912d8abbe9f3e784 */
