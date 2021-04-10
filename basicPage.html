@@ -83,8 +83,9 @@
 				.on('mouseover', d => {
 					tooltip.style('opacity', 0.9)
 						.html(d.value + " incidents")
+						.style("height", "15px")
 						.style('left', d3.event.pageX + 'px')
-						.style('top', d3.event.pageY + 5 + 'px');
+						.style('top', d3.event.pageY - 10 + 'px');
 				})
 				.on('mouseout', () => {
 					tooltip.style('opacity', 0)
@@ -98,14 +99,15 @@
 
 			//Add label for x axis
 			bar_svg.append("text")
-				.attr("class", "x label")
+				.attr("class", "axis-label")
 				.attr("text-anchor", "middle")
 				.attr("x", (width_bar) / 2)
 				.attr("y", (height_bar + margin_bar.top - 20))
-				.text("Region by continent");
+				.text("Region (Continent)");
 
 			//Add label for y axis
 			bar_svg.append("text")
+				.attr("class", "axis-label")
 				.attr("transform", "rotate(-90)")
 				.attr("y", 0 - margin_bar.left)
 				.attr("x", 0 - (height_bar / 2))
@@ -139,21 +141,22 @@
 			bar_svg.node();
 			/* Bar Chart - End*/
 
-			/* Lollipop Chart - Start */
-			var margin_lol = { top: 10, right: 30, bottom: 90, left: 40 },
-				width_lol = 450 - margin_lol.left - margin_lol.right,
+			/* Lollipop Chart - Start https://www.d3-graph-gallery.com/graph/lollipop_basic.html */
+			var margin_lol = { top: 10, right: 30, bottom: 90, left: 60 },
+				width_lol = 650 - margin_lol.left - margin_lol.right,
 				height_lol = 500 - margin_lol.top - margin_lol.bottom;
 
 			const Medium = ["Social Media", "eCommerce", "Email", "Phone App", "Web site", "Others"];
 			const others = [];
 
 			const nestedMedium = d3.nest()
-				.key(function (d) { 
-					if (Medium.includes(d.Medium)) {return d.Medium; }
+				.key(function (d) {
+					return d.Medium
+					/*if (Medium.includes(d.Medium)) { return d.Medium; }
 					else {
-						if (!others.includes(d.Medium)) others.push(d.Medium); 
+						if (!others.includes(d.Medium)) others.push(d.Medium);
 						return "Others";
-					}
+					}*/
 				})
 				.rollup(function (v) { return v.length; })
 				.entries(data);
@@ -171,7 +174,8 @@
 			// X axis
 			var lol_x = d3.scaleBand()
 				.range([0, width_lol])
-				.domain(Medium)//data.map(function (d) { return d.Medium; }))
+				.domain(nestedMedium.sort((a, b) => d3.descending(a.value, b.value))
+					.map(d => d.key))
 				.padding(1);
 
 			lol_svg.append("g")
@@ -199,11 +203,45 @@
 				.attr("y1", function (d) { return lol_y(d.value); })
 				.attr("y2", lol_y(0))
 				.attr("stroke", "purple");
-			
 
-				// Add circles (check how it looks with all media instead of grouped)
-				// Style the line graph
-				// Axis labels
+			// Draw Circles
+			lol_svg.selectAll("circle")
+				.data(nestedMedium)
+				.enter()
+				.append("circle")
+				.attr("cx", function (d) { return lol_x(d.key); })
+				.attr("cy", function (d) { return lol_y(d.value); })
+				.attr("r", "4")
+				.style("fill", "#69b3a2")
+				.attr("stroke", "black")
+				.on('mouseover', d => {
+					tooltip.style('opacity', 0.9)
+						.html(d.value + " incidents")
+						.style("height", "15px")
+						.style('left', d3.event.pageX + 'px')
+						.style('top', d3.event.pageY - 20 + 'px');
+				})
+				.on('mouseout', () => {
+					tooltip.style('opacity', 0);
+				});
+
+			// Add axis labels
+			lol_svg.append("text")
+				.attr("class", "axis-label")
+				.attr("x", (width_lol) / 2)
+				.attr("y", height_lol + margin_lol.bottom - 10)
+				.style("text-anchor", "middle")
+				.text("Reported Medium");
+
+			lol_svg.append("text")
+				.attr("class", "axis-label")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 0 - margin_lol.left)
+				.attr("x", 0 - (height_lol / 2))
+				.attr("dy", "1em")
+				.style("text-anchor", "middle")
+				.text("Number of Reports");
+
 			/* Lollipop Chart - End */
 
 
@@ -213,9 +251,7 @@
 				width_line = 960 - margin_line.left - margin_line.right,
 				height_line = 500 - margin_line.top - margin_line.bottom;
 
-			// append the svg obgect to the body of the page
-			// appends a 'group' element to 'svg'
-			// moves the 'group' element to the top left margin
+			// append the svg obgect to the div and position it
 			var line_svg = d3.select("#line")
 				.append("svg")
 				.attr("id", "line-svg")
@@ -286,6 +322,7 @@
 
 					tooltip.style('opacity', 0.9)
 						.html(dateFormat(new Date(d.key)) + '<br/> #Cheetahs: ' + d.value)
+						.style("height", "30px")
 						.style('left', d3.event.pageX + 'px')
 						.style('top', d3.event.pageY + 5 + 'px');
 				})
@@ -333,7 +370,6 @@
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
 				.text("Number of Cheetahs");
-			var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 			// Add legends						
 			line_svg.append("text")
