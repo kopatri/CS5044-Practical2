@@ -1,5 +1,19 @@
 const dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; // our data file	
 
+const showCountry = function () {
+    document.getElementById("bar").style.display = "none";
+    document.getElementById("circular").style.display = "block"
+    document.getElementById("button").innerText = "Show incidents by region"
+    document.getElementById("button").onclick = showRegion;
+}
+
+const showRegion = function () {
+    document.getElementById("bar").style.display = "block";
+    document.getElementById("circular").style.display = "none"
+    document.getElementById("button").innerText = "Show incidents by country"
+    document.getElementById("button").onclick = showCountry;
+}
+
 // parse the date / time
 const parseTime = d3.timeParse("%d-%b-%y");
 
@@ -32,7 +46,7 @@ d3.csv(dataPath).then(function (data) {
 
     const margin_bar = { top: 10, right: 40, bottom: 60, left: 40 };
     const width_bar = 850;
-    const height_bar = 400;
+    const height_bar = 600;
 
     const bar_svg = d3.select('#bar')
         .append('svg')
@@ -54,16 +68,8 @@ d3.csv(dataPath).then(function (data) {
         .selectAll("rect")
         .data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
         .join("rect")
-        .on('mouseover', d => {
-            tooltip.style('opacity', 0.9)
-                .html(d.value + " incidents")
-                .style("height", "15px")
-                .style('left', d3.event.pageX + 'px')
-                .style('top', d3.event.pageY - 10 + 'px');
-        })
-        .on('mouseout', () => {
-            tooltip.style('opacity', 0)
-        })
+        .on('mouseover', d => showTip(d))
+        .on('mouseout', () => { tooltip.style('opacity', 0) })
         .attr("x", (d, i) => bar_x(i))
         .attr("y", d => bar_y(d.value))
         .attr('title', (d) => d.value)
@@ -83,41 +89,95 @@ d3.csv(dataPath).then(function (data) {
     bar_svg.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin_bar.left)
+        .attr("y", 0 - 15)
         .attr("x", 0 - (height_bar / 2))
         .attr("dy", "1em")
         .attr("text-anchor", "middle")
         .text("Incidents")
 
-    //Add title for visualization
-    bar_svg.append("h1")
-        .attr("x", (width_bar) / 2)
-        .attr("y", (height_bar + margin_bar.top + 20))
-        .attr("text-anchor", "middle")
-        .text("Title");
-
     function yAxis(g) {
         g.attr("transform", `translate(${margin_bar.left}, 0)`)
             .call(d3.axisLeft(bar_y).ticks(null, data_bar.format))
-            .attr("font-size", '20px')
     }
 
     function xAxis(g) {
         g.attr("transform", `translate(0,${height_bar - margin_bar.bottom})`)
             .call(d3.axisBottom(bar_x).tickFormat(i => data_bar[i].key))
-            .attr("font-size", '20px')
     }
 
     bar_svg.append("g").call(xAxis);
     bar_svg.append("g").call(yAxis);
 
-    bar_svg.node();
     /* Bar Chart - End*/
+
+    /* Circular Chart - https://www.d3-graph-gallery.com/graph/circular_barplot_label.html */
+
+    const c_margin = { top: 100, right: 0, bottom: 0, left: 0 },
+        c_width = 660 - c_margin.left - c_margin.right,
+        c_height = 660 - c_margin.top - c_margin.bottom,
+        innerRadius = 90,
+        outerRadius = Math.min(c_width, c_height) / 2;
+
+    const nestedCountry = d3.nest()
+        .key(function (d) { return d.Country })
+        .rollup(function (v) { return v.length; })
+        .entries(data);
+    console.log(nestedCountry);
+    nestedCountry.sort((a, b) => d3.descending(a.value, b.value));
+
+    // append the svg object
+    const c_svg = d3.select("#circular")
+        .append("svg")
+        .attr("width", c_width + c_margin.left + c_margin.right)
+        .attr("height", c_height + c_margin.top + c_margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + (c_width / 2 + c_margin.left) + "," + (c_height / 2 + c_margin.top) + ")");
+
+    // Scales
+    const c_x = d3.scaleBand()
+        .range([0, 2 * Math.PI])    // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
+        .align(0)                  // This does nothing
+        .domain(nestedCountry.map(function (d) { return d.key; })); // The domain of the X axis is the list of states.
+    const c_y = d3.scaleRadial()
+        .range([innerRadius, outerRadius])   // Domain will be define later.
+        .domain([0, d3.max(nestedCountry, function (d) { return d.value; })]); // Domain of Y is from 0 to the max seen in the data
+
+    // Add the bars
+    c_svg.append("g")
+        .selectAll("path")
+        .data(nestedCountry)
+        .enter()
+        .append("path")
+        .attr("fill", "#69b3a2")
+        .attr("d", d3.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(function (d) { return c_y(d.value); })
+            .startAngle(function (d) { return c_x(d.key); })
+            .endAngle(function (d) { return c_x(d.key) + c_x.bandwidth(); })
+            .padAngle(0.01)
+            .padRadius(innerRadius))
+
+    // Add the labels
+    c_svg.append("g")
+        .selectAll("g")
+        .data(nestedCountry)
+        .enter()
+        .append("g")
+        .attr("text-anchor", function (d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+        .attr("transform", function (d) { return "rotate(" + ((c_x(d.key) + c_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (c_y(d.value) + 10) + ",0)"; })
+        .append("text")
+        .text(function (d) { return (`${d.key} - ${d.value}`) })
+        .attr("transform", function (d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+        .style("font-size", "11px")
+        .attr("alignment-baseline", "middle")
+
+
+    /* Circular Chart - End */
 
     /* Lollipop Chart - Start https://www.d3-graph-gallery.com/graph/lollipop_basic.html */
     const margin_lol = { top: 10, right: 30, bottom: 90, left: 60 },
-        width_lol = 650 - margin_lol.left - margin_lol.right,
-        height_lol = 500 - margin_lol.top - margin_lol.bottom;
+        width_lol = 700 - margin_lol.left - margin_lol.right,
+        height_lol = 450 - margin_lol.top - margin_lol.bottom;
 
     /*Code to group all media apart from the top 5 in "Others"
       const Medium = ["Social Media", "eCommerce", "Email", "Phone App", "Web site", "Others"];
@@ -217,7 +277,7 @@ d3.csv(dataPath).then(function (data) {
     /* Lollipop Chart - End */
 
 
-    /* Line Graph - https://bl.ocks.org/d3noob/daecba427fed7c2d912d8abbe9f3e784 */
+    /* Line Graph - https://www.d3-graph-gallery.com/graph/line_brushZoom.html */
 
     const margin_line = { top: 20, right: 20, bottom: 30, left: 50 },
         width_line = 960 - margin_line.left - margin_line.right,
@@ -232,7 +292,7 @@ d3.csv(dataPath).then(function (data) {
         .append("g")
         .attr("transform", "translate(" + margin_line.left + "," + margin_line.top + ")");
 
-    // Group by month
+    // Group by month for Total/Dead/Alive attributes
     const Cheetahs_NumberTotal = d3.nest()
         .key(d => { return d3.timeMonth(d.Incident_Date); })
         .rollup(value => { return d3.sum(value, d => { return d.Cheetahs_Number; }); })
@@ -254,77 +314,201 @@ d3.csv(dataPath).then(function (data) {
     // Set the ranges for the data
     const x = d3.scaleTime()
         .range([0, width_line])
-        .domain(d3.extent(data, d => { return d.Incident_Date; }));
+        .domain(d3.extent(Cheetahs_NumberTotal, function (d) { return new Date(d.key); }));
 
     const y = d3.scaleLinear()
         .range([height_line, 0])
         .domain([0, d3.max(Cheetahs_NumberTotal, d => { return d.value; })]);
 
-    // Create the line
-    const totalLine = d3.line()
-        //.defined(function(d) { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing them as 0
-        .x(function (d) { return x(new Date(d.key)); })
-        .y(function (d) { return y(d.value); });
-
-    // Create the area
-    const area = d3.area()
-        .x(d => { return x(new Date(d.key)); })
-        .y1(d => { return y(d.value); })
-        .y0(d => { return y.range()[0]; })
-
-    // Draw the line for total number of Cheetahs found
-    line_svg.append("path")
-        .data([Cheetahs_NumberTotal])
-        .attr("class", "line")
-        .style("stroke", "black")
-        .attr("d", totalLine);
-
-    // Add circles on each data point on the line
-    line_svg.selectAll("circle")
-        .data(Cheetahs_NumberTotal)
-        .enter()
-        .append("circle")
-        .attr("fill", "black")
-        .attr("stroke", "none")
-        .attr("cx", function (d) { return x(new Date(d.key)) })
-        .attr("cy", function (d) { return y(d.value) })
-        .attr("r", 3)
-        .on('mouseover', d => {
-            const dateFormat = d3.timeFormat("%b-%Y");
-
-            tooltip.style('opacity', 0.9)
-                .html(dateFormat(new Date(d.key)) + '<br/> #Cheetahs: ' + d.value)
-                .style("height", "30px")
-                .style('left', d3.event.pageX + 'px')
-                .style('top', d3.event.pageY + 5 + 'px');
-        })
-        .on('mouseout', () => {
-            tooltip.style('opacity', 0);
-        });
-
-    // Draw the areas for total number found dead and alive
-    line_svg.append("path")
-        .data([DiedTotal])
-        .attr("class", "area")
-        .style("stroke", "red")
-        .style("fill", "red")
-        .attr("d", area);
-
-    line_svg.append("path")
-        .data([AliveTotal])
-        .attr("class", "area")
-        .style("stroke", "blue")
-        .style("fill", "blue")
-        .attr("d", area);
-
     // Draw the X Axis
-    line_svg.append("g")
+    const xScale = line_svg.append("g")
         .attr("transform", "translate(0," + height_line + ")")
         .call(d3.axisBottom(x));
 
     // Draw the Y Axis
     line_svg.append("g")
         .call(d3.axisLeft(y));
+
+    // Create clip area in which lines will be drawn
+    var clip = line_svg.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("width", width_line)
+        .attr("height", height_line + 0.5)
+        .attr("x", 0)
+        .attr("y", 0);
+
+    // Create the brushing area
+    var brush = d3.brushX()
+        .extent([[0, 0], [width_line, height_line]])  // Entire area is selectable
+        .on("end", updateChart)  // Once selected, update all data points
+
+    // Create the variables where the brushing and clipping takes place on the line/area/circles
+    var totalLine = line_svg.append('g')
+        .attr("clip-path", "url(#clip)")
+
+    var area = line_svg.append('g')
+        .attr("clip-path", "url(#clip)")
+
+    var circles = line_svg.append('g')
+        .attr("clip-path", "url(#clip)")
+
+    // Add the brushing - brushing only needs to be appended to one object. The others will still update in the function
+    // Brushing must be added before the data to allow hovering effects
+    totalLine.append("g")
+        .attr("class", "brush")
+        .call(brush);
+
+    // Draw the areas and circles for dead cheetahs    
+    area.append("path")
+        .datum(DiedTotal)
+        .attr("class", "area")
+        .style("stroke", "red")
+        .style("fill", "red")
+        .attr("d", d3.area()
+            .x(d => { return x(new Date(d.key)); })
+            .y1(d => { return y(d.value); })
+            .y0(d => { return y.range()[0]; }))
+
+    circles.selectAll("dots")
+        .data(DiedTotal)
+        .enter()
+        .append("circle")
+        .attr("class", "circle")
+        .attr("fill", "red")
+        .attr("stroke", "none")
+        .attr("cx", function (d) { return x(new Date(d.key)) })
+        .attr("cy", function (d) { return y(d.value) })
+        .attr("r", 3)
+        .on('mouseover', d => showTip(d))
+        .on('mouseout', () => { tooltip.style('opacity', 0); });
+
+    area.append("path")
+        .data([AliveTotal])
+        .attr("class", "area")
+        .style("stroke", "blue")
+        .style("fill", "blue")
+        .attr("d", d3.area()
+            .x(d => { return x(new Date(d.key)); })
+            .y1(d => { return y(d.value); })
+            .y0(d => { return y.range()[0]; }))
+
+    circles.selectAll("dot")
+        .data(AliveTotal)
+        .enter()
+        .append("circle")
+        .attr("class", "circle")
+        .attr("fill", "blue")
+        .attr("stroke", "none")
+        .attr("cx", function (d) { return x(new Date(d.key)) })
+        .attr("cy", function (d) { return y(d.value) })
+        .attr("r", 3)
+        .on('mouseover', d => showTip(d))
+        .on('mouseout', () => { tooltip.style('opacity', 0); });
+
+    // Draw the line
+    totalLine.append("path")
+        .datum(Cheetahs_NumberTotal)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+            .x(function (d) { return x(new Date(d.key)) })
+            .y(function (d) { return y(d.value) })
+        )
+
+    // Draw the circles
+    circles.selectAll("circles")
+        .data(Cheetahs_NumberTotal)
+        .enter()
+        .append("circle")
+        .attr("class", "circle")
+        .attr("fill", "black")
+        .attr("stroke", "none")
+        .attr("cx", function (d) { return x(new Date(d.key)) })
+        .attr("cy", function (d) { return y(d.value) })
+        .attr("r", 3)
+        .on('mouseover', d => showTip(d))
+        .on('mouseout', () => { tooltip.style('opacity', 0); });
+
+    // A function that sets idleTimeOut to null
+    var idleTimeout;
+    function idled() { idleTimeout = null; }
+
+    // A function that updates the chart for given boundaries
+    function updateChart() {
+
+        // What are the selected boundaries?
+        extent = d3.event.selection
+
+        // If no selection, back to initial coordinate. Otherwise, update X axis domain
+        if (!extent) {
+            if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+            x.domain([4, 8])
+        } else {
+            x.domain([x.invert(extent[0]), x.invert(extent[1])])
+            totalLine.select(".brush").call(brush.move, null) // This removes the grey brush area as soon as the selection has been done
+        }
+
+        // Update axis and line/area/circles position
+        xScale.call(d3.axisBottom(x));
+
+        area.selectAll(".area")
+            .attr("d", d3.area()
+                .x(d => { return x(new Date(d.key)); })
+                .y1(d => { return y(d.value); })
+                .y0(d => { return y.range()[0]; }))
+
+        totalLine.select('.line')
+            .attr("d", d3.line()
+                .x(function (d) { return x(new Date(d.key)) })
+                .y(function (d) { return y(d.value) })
+            )
+
+        circles.selectAll(".circle")
+            .attr("cx", function (d) { return x(new Date(d.key)) })
+            .attr("cy", function (d) { return y(d.value) })
+            .attr("r", 3)
+            .on('mouseover', d => showTip(d))
+            .on('mouseout', () => { tooltip.style('opacity', 0); });
+    }
+
+    // Reset chart when double clicking
+    line_svg.on("dblclick", function () {
+        x.domain(d3.extent(Cheetahs_NumberTotal, function (d) { return new Date(d.key); }));
+        xScale.call(d3.axisBottom(x));
+
+        area.selectAll(".area")
+            .attr("d", d3.area()
+                .x(d => { return x(new Date(d.key)); })
+                .y1(d => { return y(d.value); })
+                .y0(d => { return y.range()[0]; }))
+
+        line_svg.select('.line')
+            .attr("d", d3.line()
+                .x(function (d) { return x(new Date(d.key)) })
+                .y(function (d) { return y(d.value) })
+            )
+
+        circles.selectAll(".circle")
+            .attr("cx", function (d) { return x(new Date(d.key)) })
+            .attr("cy", function (d) { return y(d.value) })
+            .attr("r", 3)
+            .on('mouseover', d => showTip(d))
+            .on('mouseout', () => { tooltip.style('opacity', 0); });
+    });
+
+    // Function to show tooltip for line/area graph
+    function showTip(d) {
+        const dateFormat = d3.timeFormat("%b-%Y");
+
+        tooltip.style('opacity', 0.9)
+            .html(dateFormat(new Date(d.key)) + '<br/> #Cheetahs: ' + d.value)
+            .style("height", "30px")
+            .style('left', d3.event.pageX + 'px')
+            .style('top', d3.event.pageY + 5 + 'px');
+    }
 
     // Add axis labels
     line_svg.append("text")
@@ -366,68 +550,4 @@ d3.csv(dataPath).then(function (data) {
         .text("Reported Died");
 
     /* Line Chart - End */
-
-    /* Radial Chart */
-    // set the dimensions and margins of the graph
-    const rad_margin = { top: 100, right: 0, bottom: 0, left: 0 },
-        rad_width = 660 - rad_margin.left - rad_margin.right,
-        rad_height = 660 - rad_margin.top - rad_margin.bottom,
-        innerRadius = 90,
-        outerRadius = Math.min(rad_width, rad_height) / 2;
-
-    const nestedCountry = d3.nest()
-        .key(function (d) { return d.Country })
-        .rollup(function (v) { return v.length; })
-        .entries(data);
-    console.log(nestedCountry);
-    nestedCountry.sort((a, b) => d3.descending(a.value, b.value));
-
-    // append the svg object
-    const rad_svg = d3.select("#radial")
-        .append("svg")
-        .attr("width", rad_width + rad_margin.left + rad_margin.right)
-        .attr("height", rad_height + rad_margin.top + rad_margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + (rad_width / 2 + rad_margin.left) + "," + (rad_height / 2 + rad_margin.top) + ")");
-
-    // Scales
-    const rad_x = d3.scaleBand()
-        .range([0, 2 * Math.PI])    // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
-        .align(0)                  // This does nothing
-        .domain(nestedCountry.map(function (d) { return d.key; })); // The domain of the X axis is the list of states.
-    const rad_y = d3.scaleRadial()
-        .range([innerRadius, outerRadius])   // Domain will be define later.
-        .domain([0, d3.max(nestedCountry, function (d) { return d.value; })]); // Domain of Y is from 0 to the max seen in the data
-
-    // Add the bars
-    rad_svg.append("g")
-        .selectAll("path")
-        .data(nestedCountry)
-        .enter()
-        .append("path")
-        .attr("fill", "#69b3a2")
-        .attr("d", d3.arc()
-            .innerRadius(innerRadius)
-            .outerRadius(function (d) { return rad_y(d.value); })
-            .startAngle(function (d) { return rad_x(d.key); })
-            .endAngle(function (d) { return rad_x(d.key) + rad_x.bandwidth(); })
-            .padAngle(0.01)
-            .padRadius(innerRadius))
-
-    // Add the labels
-    rad_svg.append("g")
-        .selectAll("g")
-        .data(nestedCountry)
-        .enter()
-        .append("g")
-        .attr("text-anchor", function (d) { return (rad_x(d.key) + rad_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
-        .attr("transform", function (d) { return "rotate(" + ((rad_x(d.key) + rad_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (rad_y(d.value) + 10) + ",0)"; })
-        .append("text")
-        .text(function (d) { return (d.key) })
-        .attr("transform", function (d) { return (rad_x(d.key) + rad_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "11px")
-        .attr("alignment-baseline", "middle")
-
-
-    /* Radial Chart - End */
 });

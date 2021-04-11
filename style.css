@@ -5,6 +5,10 @@
     display: flex;
 }*/
 
+#circular {
+    display: none;
+}
+
 .axis-label {
     color: darkslategray;
 }
@@ -30,6 +34,10 @@
 
 .area {
     opacity: 0.8;
+}
+
+.circle {
+    opacity: 0.4;
 }
 
 .legend {
