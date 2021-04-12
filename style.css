@@ -63,6 +63,7 @@ footer {
     background-color: #DDAA36;
     padding: 10px;
     border-radius: 15px;
+    margin: 5px;
 }
 
 header {
@@ -81,6 +82,10 @@ footer {
     text-align: right;
     margin-top: 20px;
     padding-top: 10px
+}
+
+p {
+    margin: 0 0 0px;
 }
 
 body {
