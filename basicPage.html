@@ -27,21 +27,42 @@
 
 	<div id="visualisation">
 		<div id="location">
-			<h2>Number of Incidents Recorded</h2>
-			<button id="button" onclick="showCountry()">Show incidents by country</button>
-			<i class="icon-info-sign"></i>
+			<h2>Where were cheetahs trafficked?</h2>
+			<button id="button" onclick="showCountry()">Show reports by country</button>
+			<i class="icon-info-sign" id="info_location" onclick="openModal(this)"></i>
 			<div id="bar"></div>
 			<div id="circular"></div>
 		</div>
 		<div id="media">
-			<h2>Where were reports received?</h2><button class="help">Help</button>
+			<h2>Where are cheetahs advertised?</h2>
+			<i class="icon-info-sign" id="info_media" onclick="openModal(this)"></i>
 			<div id="lollipop"></div>
 		</div>
 		<div id="quantity">
-			<h2>How many cheetahs were found?</h2><button class="help">Help</button>
+			<h2>How many cheetahs were found?</h2>
+			<i class="icon-info-sign" id="info_quantity" onclick="openModal(this)"></i>
 			<p>Select years for more detail. Double click to reset graph.</p>
 			<div id="line"> </div>
 		</div>
+	</div>
+
+	<!-- The Modal https://www.w3schools.com/howto/howto_css_modals.asp -->
+	<div id="info_modal" class="modal">
+
+		<!-- Modal content -->
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close">&times;</span>
+				<h2 id="modal_header">Modal Header</h2>
+			</div>
+			<div class="modal-body">
+				<p id="modal_body">Some text in the Modal Body</p>
+			</div>
+			<div class="modal-footer">
+				<h3 id="modal_footer">Modal Footer</h3>
+			</div>
+		</div>
+
 	</div>
 
 	<footer>

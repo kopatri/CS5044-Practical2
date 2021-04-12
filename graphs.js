@@ -3,14 +3,14 @@ const dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; /
 const showCountry = function () {
     document.getElementById("bar").style.display = "none";
     document.getElementById("circular").style.display = "block"
-    document.getElementById("button").innerText = "Show incidents by region"
+    document.getElementById("button").innerText = "Show reports by region"
     document.getElementById("button").onclick = showRegion;
 }
 
 const showRegion = function () {
     document.getElementById("bar").style.display = "block";
     document.getElementById("circular").style.display = "none"
-    document.getElementById("button").innerText = "Show incidents by country"
+    document.getElementById("button").innerText = "Show reports by country"
     document.getElementById("button").onclick = showCountry;
 }
 
@@ -90,7 +90,7 @@ d3.csv(dataPath).then(function (data) {
         .attr("class", "rect")
         .on('mouseover', d => {
             tooltip.style('opacity', 0.9)
-                .html(d.value + " incidents")
+                .html(d.value + " reports")
                 .style("height", "15px")
                 .style('left', d3.event.pageX + 'px')
                 .style('top', d3.event.pageY - 20 + 'px');
@@ -112,14 +112,14 @@ d3.csv(dataPath).then(function (data) {
         .attr("x", 0 - (height_bar / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Number of incidents");
+        .text("Number of reports");
 
 
     /* Bar Chart - End*/
 
     /* Circular Chart - https://www.d3-graph-gallery.com/graph/circular_barplot_label.html */
 
-    const c_margin = { top: 100, right: 0, bottom: 0, left: 0 },
+    const c_margin = { top: 130, right: 0, bottom: 0, left: 0 },
         c_width = 660 - c_margin.left - c_margin.right,
         c_height = 600 - c_margin.top - c_margin.bottom,
         innerRadius = 90,
@@ -155,7 +155,7 @@ d3.csv(dataPath).then(function (data) {
         .data(nestedCountry)
         .enter()
         .append("path")
-        .attr("fill", "#69b3a2")
+        .attr("fill", "green")
         .attr("d", d3.arc()
             .innerRadius(innerRadius)
             .outerRadius(function (d) { return c_y(d.value); })
@@ -256,7 +256,7 @@ d3.csv(dataPath).then(function (data) {
         .attr("stroke", "black")
         .on('mouseover', d => {
             tooltip.style('opacity', 0.9)
-                .html(d.value + " incidents")
+                .html(d.value + " reports")
                 .style("height", "15px")
                 .style('left', d3.event.pageX + 'px')
                 .style('top', d3.event.pageY - 20 + 'px');
@@ -578,3 +578,53 @@ d3.csv(dataPath).then(function (data) {
 
     /* Line Chart - End */
 });
+
+/* Handling Modals  https://www.w3schools.com/howto/howto_css_modals.asp */
+
+// Get the modal
+var modal = document.getElementById("info_modal");
+
+// When the user clicks on the information icon, open the modal
+const openModal = function (element) {
+    applyModalText(element.id);
+    modal.style.display = "block";
+}
+
+//Apply modal text accordingly to the correspoding information icon
+const applyModalText = function (modal){
+    let header, body, footer = "";
+    if(modal == "info_location"){
+        header = "Location";
+        body = "Location";
+        footer = "Location";
+    }else if(modal == "info_media"){
+        header = "Media";
+        body = "Media";
+        footer = "Media";
+    }else if(modal ==  "info_quantity"){
+        header = "Quantity";
+        body = "Quantity";
+        footer = "Quantity";
+    }
+    document.getElementById("modal_header").innerHTML = header;
+    document.getElementById("modal_body").innerHTML = body;
+    document.getElementById("modal_footer").innerHTML = footer;
+}
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
