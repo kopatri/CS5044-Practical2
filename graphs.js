@@ -279,7 +279,7 @@ d3.csv(dataPath).then(function (data) {
 
     /* Line Graph - https://www.d3-graph-gallery.com/graph/line_brushZoom.html */
 
-    const margin_line = { top: 20, right: 20, bottom: 30, left: 50 },
+    const margin_line = { top: 20, right: 20, bottom: 90, left: 60 },
         width_line = 960 - margin_line.left - margin_line.right,
         height_line = 500 - margin_line.top - margin_line.bottom;
 
@@ -322,8 +322,15 @@ d3.csv(dataPath).then(function (data) {
 
     // Draw the X Axis
     const xScale = line_svg.append("g")
+        .style("class", "x-axis")
         .attr("transform", "translate(0," + height_line + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
+
+    xScale.selectAll("text")
+        .attr("dx", "-0.5em")
+        .attr("dy", "0.15em")
+        .style("text-anchor", "end")
+        .attr("transform", "rotate(-45)");
 
     // Draw the Y Axis
     line_svg.append("g")
@@ -354,7 +361,7 @@ d3.csv(dataPath).then(function (data) {
         .attr("clip-path", "url(#clip)")
 
     // Add the brushing - brushing only needs to be appended to one object. The others will still update in the function
-    // Brushing must be added before the data to allow hovering effects
+    // Brushing must be added before the data points to allow hovering effects
     totalLine.append("g")
         .attr("class", "brush")
         .call(brush);
@@ -383,6 +390,7 @@ d3.csv(dataPath).then(function (data) {
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
 
+    // Draw the areas and circles for alive cheetahs 
     area.append("path")
         .data([AliveTotal])
         .attr("class", "area")
@@ -452,7 +460,12 @@ d3.csv(dataPath).then(function (data) {
         }
 
         // Update axis and line/area/circles position
-        xScale.call(d3.axisBottom(x));
+        xScale.call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
+            .selectAll("text")
+            .attr("dx", "-0.5em")
+            .attr("dy", "0.15em")
+            .style("text-anchor", "end")
+            .attr("transform", "rotate(-45)");
 
         area.selectAll(".area")
             .attr("d", d3.area()
@@ -477,7 +490,12 @@ d3.csv(dataPath).then(function (data) {
     // Reset chart when double clicking
     line_svg.on("dblclick", function () {
         x.domain(d3.extent(Cheetahs_NumberTotal, function (d) { return new Date(d.key); }));
-        xScale.call(d3.axisBottom(x));
+        xScale.call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
+            .selectAll("text")
+            .attr("dx", "-0.5em")
+            .attr("dy", "0.15em")
+            .style("text-anchor", "end")
+            .attr("transform", "rotate(-45)");
 
         area.selectAll(".area")
             .attr("d", d3.area()
