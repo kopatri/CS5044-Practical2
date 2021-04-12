@@ -1,9 +1,29 @@
 /* General Styling */
 
-/*
+
 #visualisation {
-    display: flex;
-}*/
+    display: grid;
+    grid-template-columns: 750px 750px;
+    grid-template-rows: auto auto
+}
+
+#location {
+    grid-column: 1/1;
+    grid-row: 1/1;
+}
+
+svg {
+    margin-top: 15px;
+}
+
+#media {
+    grid-column: 2/2;
+    grid-row: 1/1
+}
+
+h2 {
+    display:inline;
+}
 
 #circular {
     display: none;

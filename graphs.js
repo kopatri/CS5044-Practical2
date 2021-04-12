@@ -46,7 +46,7 @@ d3.csv(dataPath).then(function (data) {
 
     const margin_bar = { top: 10, right: 40, bottom: 60, left: 40 };
     const width_bar = 850;
-    const height_bar = 600;
+    const height_bar = 620;
 
     const bar_svg = d3.select('#bar')
         .append('svg')
@@ -183,7 +183,7 @@ d3.csv(dataPath).then(function (data) {
     /* Lollipop Chart - Start https://www.d3-graph-gallery.com/graph/lollipop_basic.html */
     const margin_lol = { top: 10, right: 30, bottom: 90, left: 60 },
         width_lol = 700 - margin_lol.left - margin_lol.right,
-        height_lol = 450 - margin_lol.top - margin_lol.bottom;
+        height_lol = 580 - margin_lol.top - margin_lol.bottom;
 
     /*Code to group all media apart from the top 5 in "Others"
       const Medium = ["Social Media", "eCommerce", "Email", "Phone App", "Web site", "Others"];
@@ -286,7 +286,7 @@ d3.csv(dataPath).then(function (data) {
     /* Line Graph - https://www.d3-graph-gallery.com/graph/line_brushZoom.html */
 
     const margin_line = { top: 20, right: 20, bottom: 90, left: 60 },
-        width_line = 960 - margin_line.left - margin_line.right,
+        width_line = 1400 - margin_line.left - margin_line.right,
         height_line = 500 - margin_line.top - margin_line.bottom;
 
     // append the svg obgect to the div and position it

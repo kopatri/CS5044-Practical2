@@ -4,7 +4,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
 	<!-- Function for radial charts -->
-<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
 
 	<!-- we want to use D3, so this is where the D3 library version 5 gets called-->
 	<script src="https://d3js.org/d3.v5.js"></script>
@@ -16,18 +16,25 @@
 </head>
 
 <body>
-	<!-- simple text heading-->
 	<h1>Illegal Cheetah Trade</h1>
-
-	<!-- Create a div where the graph will take place -->
-	<button id="button" onclick="showCountry()">Show incidents by country</button>
+	<p>Paragraph to explain the dataset and the visualisation</p>
 
 	<div id="visualisation">
-		<div id="bar"></div>
-		<div id="circular"></div>
-		<div id="lollipop"></div>
-		<div id="line"> </div>
-		
+		<div id="location">
+			<h2>Number of Incidents Recorded</h2>
+			<button id="button" onclick="showCountry()">Show incidents by country</button><button class="help">Help</button>
+			<div id="bar"></div>
+			<div id="circular"></div>
+		</div>
+		<div id="media">
+			<h2>Where were reports received?</h2><button class="help">Help</button>
+			<div id="lollipop"></div>
+		</div>
+		<div id="quantity">
+			<h2>How many cheetahs were found?</h2><button class="help">Help</button>
+			<p>Select years for more detail. Double click to reset graph.</p>
+			<div id="line"> </div>
+		</div>
 	</div>
 
 	<script src="graphs.js"></script>
