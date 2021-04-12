@@ -68,7 +68,13 @@ d3.csv(dataPath).then(function (data) {
         .selectAll("rect")
         .data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
         .join("rect")
-        .on('mouseover', d => showTip(d))
+        .on('mouseover', d => {
+            tooltip.style('opacity', 0.9)
+                .html(d.value + " incidents")
+                .style("height", "15px")
+                .style('left', d3.event.pageX + 'px')
+                .style('top', d3.event.pageY - 20 + 'px');
+            })
         .on('mouseout', () => { tooltip.style('opacity', 0) })
         .attr("x", (d, i) => bar_x(i))
         .attr("y", d => bar_y(d.value))
