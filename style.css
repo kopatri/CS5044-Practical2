@@ -39,7 +39,6 @@ h2 {
 .axis-label {
     color: darkslategray;
     font-size: 20px;
-    /*Styling the y + x axis label */
 }
 
 .tooltip {
@@ -105,17 +104,19 @@ body {
     font-size: 30px;
 }
 
-button {
-    background-color: #4CAF50;
-    /* Green */
+#button {
+    background-color: #CB8C35;
+    color: #000407;
     border: none;
-    color: white;
-    margin-bottom: 15px;
-    vertical-align: middle;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     border-radius: 15px;
+    vertical-align: middle;
+    margin-bottom: 15px;
+}
+
+#button:hover {
+    color: #FAF9F9;
 }
 
 i:hover {
