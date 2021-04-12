@@ -1,7 +1,7 @@
 /* General Styling */
 
 * {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #visualisation {
@@ -29,7 +29,7 @@ svg {
 }
 
 h2 {
-    display:inline;
+    display: inline;
 }
 
 #circular {
@@ -38,50 +38,61 @@ h2 {
 
 .axis-label {
     color: darkslategray;
-    font-size: 20px; /*Styling the y + x axis label */
+    font-size: 20px;
+    /*Styling the y + x axis label */
 }
 
 .tooltip {
-    position: absolute;			
-    text-align: center;		
-    line-height:25px;	
-    width: 100px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: lightsteelblue;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;	
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
 }
 
-.tick>text{
+.tick>text {
     font-size: 12px;
 }
 
-header, footer{
-    text-align: center;
-    background-color: khaki;
+header,
+footer {
+    background-color: #DDAA36;
     padding: 10px;
     border-radius: 15px;
 }
 
-header{ 
+header {
+    text-align: center;
     margin-bottom: 5px;
 }
 
-footer {
-    margin-top: 20px;
+header>p {
+    display: block;
+    text-align: center;
+    padding-left: 20%;
+    padding-right: 20%;
 }
 
-body{
+footer {
+    text-align: right;
+    margin-top: 20px;
+    padding-top: 10px
+}
+
+body {
     background-color: linen;
 }
 
-#location, #media {
+#location,
+#media {
     text-align: center;
 }
 
-#quantity{
+#quantity {
     margin-left: 30px
 }
 
@@ -89,11 +100,12 @@ body{
     font-size: 30px;
 }
 
-button{
-    background-color: #4CAF50; /* Green */
+button {
+    background-color: #4CAF50;
+    /* Green */
     border: none;
     color: white;
-    padding: 15px 32px ;
+    padding: 15px 32px;
     margin-bottom: 15px;
     vertical-align: middle;
     text-align: center;
@@ -108,28 +120,39 @@ i:hover {
     cursor: pointer;
 }
 
+
 /*Modal Styling https://www.w3schools.com/howto/howto_css_modals.asp */
 
+
 /* Modal Header */
+
 .modal-header {
     padding: 2px 16px;
     background-color: #5cb85c;
     color: white;
-  }
-  
-  /* Modal Body */
-  .modal-body {padding: 2px 16px;}
-  
-  /* Modal Footer */
-  .modal-footer {
+}
+
+
+/* Modal Body */
+
+.modal-body {
+    padding: 2px 16px;
+}
+
+
+/* Modal Footer */
+
+.modal-footer {
     padding: 2px 16px;
     background-color: #5cb85c;
     color: white;
     text-align: left;
-  }
-  
-  /* Modal Content */
-  .modal-content {
+}
+
+
+/* Modal Content */
+
+.modal-content {
     position: relative;
     background-color: #fefefe;
     margin: auto;
@@ -137,18 +160,28 @@ i:hover {
     padding: 0;
     border: 1px solid #888;
     width: 80%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     animation-name: animatetop;
     animation-duration: 0.4s
-  }
-  
-  /* Add Animation */
-  @keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
-  }
+}
+
+
+/* Add Animation */
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
 
 /* Line Chart Styling */
+
 .line {
     fill: none;
     stroke-width: 1.5;
@@ -167,7 +200,9 @@ i:hover {
     font-weight: bold;
 }
 
+
 /* Bar Chart Styling */
+
 .rect:hover {
     opacity: 0.5;
 }
