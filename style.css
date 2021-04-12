@@ -12,6 +12,10 @@
     grid-row: 1/1;
 }
 
+.x-axis {
+    font-size: 14px;
+}
+
 svg {
     margin-top: 15px;
 }

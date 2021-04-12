@@ -74,7 +74,7 @@ d3.csv(dataPath).then(function (data) {
                 .style("height", "15px")
                 .style('left', d3.event.pageX + 'px')
                 .style('top', d3.event.pageY - 20 + 'px');
-            })
+        })
         .on('mouseout', () => { tooltip.style('opacity', 0) })
         .attr("x", (d, i) => bar_x(i))
         .attr("y", d => bar_y(d.value))
@@ -108,6 +108,7 @@ d3.csv(dataPath).then(function (data) {
 
     function xAxis(g) {
         g.attr("transform", `translate(0,${height_bar - margin_bar.bottom})`)
+            .style("class", "x-axis")
             .call(d3.axisBottom(bar_x).tickFormat(i => data_bar[i].key))
     }
 
@@ -120,7 +121,7 @@ d3.csv(dataPath).then(function (data) {
 
     const c_margin = { top: 100, right: 0, bottom: 0, left: 0 },
         c_width = 660 - c_margin.left - c_margin.right,
-        c_height = 660 - c_margin.top - c_margin.bottom,
+        c_height = 600 - c_margin.top - c_margin.bottom,
         innerRadius = 90,
         outerRadius = Math.min(c_width, c_height) / 2;
 
@@ -221,6 +222,7 @@ d3.csv(dataPath).then(function (data) {
         .call(d3.axisBottom(lol_x))
         .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("class", "x-axis")
         .style("text-anchor", "end");
 
     // Add Y axis
@@ -328,11 +330,12 @@ d3.csv(dataPath).then(function (data) {
 
     // Draw the X Axis
     const xScale = line_svg.append("g")
-        .style("class", "x-axis")
+        
         .attr("transform", "translate(0," + height_line + ")")
         .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
 
     xScale.selectAll("text")
+        .style("class", "x-axis")
         .attr("dx", "-0.5em")
         .attr("dy", "0.15em")
         .style("text-anchor", "end")
