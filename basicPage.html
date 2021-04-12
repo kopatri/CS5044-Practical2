@@ -3,6 +3,10 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
+	<!--Bootstrap code-->
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
 	<!-- Function for radial charts -->
 	<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
 
@@ -16,13 +20,16 @@
 </head>
 
 <body>
-	<h1>Illegal Cheetah Trade</h1>
-	<p>Paragraph to explain the dataset and the visualisation</p>
+	<header>
+		<h1>Illegal Cheetah Trade</h1>
+		<p>Paragraph to explain the dataset and the visualisation</p>
+	</header>
 
 	<div id="visualisation">
 		<div id="location">
 			<h2>Number of Incidents Recorded</h2>
-			<button id="button" onclick="showCountry()">Show incidents by country</button><button class="help">Help</button>
+			<button id="button" onclick="showCountry()">Show incidents by country</button>
+			<i class="icon-info-sign"></i>
 			<div id="bar"></div>
 			<div id="circular"></div>
 		</div>
@@ -36,6 +43,10 @@
 			<div id="line"> </div>
 		</div>
 	</div>
+
+	<footer>
+		<p>CS5044 - Practical 2 - Group 46 - 200030212 & 190031409</p>
+	</footer>
 
 	<script src="graphs.js"></script>
 </body>

@@ -44,30 +44,50 @@ d3.csv(dataPath).then(function (data) {
         .rollup(function (v) { return v.length; })
         .entries(data);
 
-    const margin_bar = { top: 10, right: 40, bottom: 60, left: 40 };
-    const width_bar = 850;
-    const height_bar = 620;
+    const margin_bar = { top: 10, right: 30, bottom: 90, left: 70 },
+        width_bar = 700 - margin_bar.left - margin_bar.right,
+        height_bar = 580 - margin_bar.top - margin_bar.bottom;
 
+    // append the svg object to the body of the page
     const bar_svg = d3.select('#bar')
-        .append('svg')
-        .attr('width', width_bar - margin_bar.left - margin_bar.right)
-        .attr('height', height_bar - margin_bar.top - margin_bar.bottom)
-        .attr("viewBox", [0, 0, width_bar, height_bar]);
+        .append("svg")
+        .attr("width", width_bar + margin_bar.left + margin_bar.right)
+        .attr("height", height_bar + margin_bar.top + margin_bar.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin_bar.left + "," + margin_bar.top + ")");
 
+    // Add X axis
     const bar_x = d3.scaleBand()
-        .domain(d3.range(data_bar.length))
-        .range([margin_bar.left, width_bar - margin_bar.right])
-        .padding(0.1)
-
-    const bar_y = d3.scaleLinear()
-        .domain([0, d3.max(data_bar, function (d) { return d.value; })])
-        .range([height_bar - margin_bar.bottom, margin_bar.top])
+        .range([0, width_bar])
+        .domain(data_bar.sort((a, b) => d3.descending(a.value, b.value))
+            .map(d => d.key))
+        .padding(0.1);
 
     bar_svg.append("g")
-        .attr("fill", 'green')
-        .selectAll("rect")
-        .data(data_bar.sort((a, b) => d3.descending(a.value, b.value)))
-        .join("rect")
+        .attr("transform", "translate(0," + height_bar + ")")
+        .call(d3.axisBottom(bar_x))
+        .selectAll("text")
+        .style("class", "x-axis")
+
+    // Add Y axis
+    const bar_y = d3.scaleLinear()
+        .domain([0, d3.max(data_bar, function (d) { return d.value; })])
+        .range([height_bar, 0]);
+
+    bar_svg.append("g")
+        .call(d3.axisLeft(bar_y));
+
+    //Draw bar
+    bar_svg.selectAll("bars")
+        .data(data_bar)
+        .enter()
+        .append("rect")
+        .attr("x", function (d) { return bar_x(d.key); })
+        .attr("y", function (d) { return bar_y(d.value); })
+        .attr("width", bar_x.bandwidth())
+        .attr("height", function (d) { return height_bar - bar_y(d.value); })
+        .attr("fill", "green")
+        .attr("class", "rect")
         .on('mouseover', d => {
             tooltip.style('opacity', 0.9)
                 .html(d.value + " incidents")
@@ -76,44 +96,24 @@ d3.csv(dataPath).then(function (data) {
                 .style('top', d3.event.pageY - 20 + 'px');
         })
         .on('mouseout', () => { tooltip.style('opacity', 0) })
-        .attr("x", (d, i) => bar_x(i))
-        .attr("y", d => bar_y(d.value))
-        .attr('title', (d) => d.value)
-        .attr("class", "rect")
-        .attr("height", d => bar_y(0) - bar_y(d.value))
-        .attr("width", bar_x.bandwidth());
 
-    //Add label for x axis
+    // Add axis labels
     bar_svg.append("text")
         .attr("class", "axis-label")
-        .attr("text-anchor", "middle")
         .attr("x", (width_bar) / 2)
-        .attr("y", (height_bar + margin_bar.top - 20))
+        .attr("y", height_bar + margin_bar.bottom - 40)
+        .style("text-anchor", "middle")
         .text("Region (Continent)");
 
-    //Add label for y axis
     bar_svg.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 - 15)
+        .attr("y", 0 - margin_bar.left )
         .attr("x", 0 - (height_bar / 2))
         .attr("dy", "1em")
-        .attr("text-anchor", "middle")
-        .text("Incidents")
+        .style("text-anchor", "middle")
+        .text("Number of incidents");
 
-    function yAxis(g) {
-        g.attr("transform", `translate(${margin_bar.left}, 0)`)
-            .call(d3.axisLeft(bar_y).ticks(null, data_bar.format))
-    }
-
-    function xAxis(g) {
-        g.attr("transform", `translate(0,${height_bar - margin_bar.bottom})`)
-            .style("class", "x-axis")
-            .call(d3.axisBottom(bar_x).tickFormat(i => data_bar[i].key))
-    }
-
-    bar_svg.append("g").call(xAxis);
-    bar_svg.append("g").call(yAxis);
 
     /* Bar Chart - End*/
 
@@ -175,7 +175,7 @@ d3.csv(dataPath).then(function (data) {
         .append("text")
         .text(function (d) { return (`${d.key} - ${d.value}`) })
         .attr("transform", function (d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "11px")
+        .style("font-size", "12px")
         .attr("alignment-baseline", "middle")
 
 
@@ -269,7 +269,7 @@ d3.csv(dataPath).then(function (data) {
     lol_svg.append("text")
         .attr("class", "axis-label")
         .attr("x", (width_lol) / 2)
-        .attr("y", height_lol + margin_lol.bottom - 10)
+        .attr("y", height_lol + margin_lol.bottom - 5)
         .style("text-anchor", "middle")
         .text("Reported Medium");
 
@@ -330,7 +330,7 @@ d3.csv(dataPath).then(function (data) {
 
     // Draw the X Axis
     const xScale = line_svg.append("g")
-        
+
         .attr("transform", "translate(0," + height_line + ")")
         .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
 
@@ -556,7 +556,7 @@ d3.csv(dataPath).then(function (data) {
 
     // Add legends						
     line_svg.append("text")
-        .attr("x", width_line - margin_line.left - 120)
+        .attr("x", width_line - margin_line.left - 135)
         .attr("y", margin_line.top + 10)
         .attr("class", "legend")
         .style("fill", "black")
