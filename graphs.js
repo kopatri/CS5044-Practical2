@@ -689,7 +689,7 @@ const applyModalText = function(modal) {
             </tr>
         </table>`;
     } else if (modal == "info_quantity") {
-        header = "Additional information about reports linked to found cheetahs";
+        header = "Additional information about the number of found cheetahs";
         body = `
         <ul>
             <li>The timeline shows an overview of the number of cheetahs reported over ten years.</li>
