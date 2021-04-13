@@ -36,7 +36,7 @@ d3.csv(dataPath).then(function(data) {
         d.Died = isNaN(d.Died) ? null : d.Died;
     });
 
-    /*Bar Chart - Start- https://github.com/kriscfoster/d3-barchart*/
+    /*Bar Chart - Start, adapted from https://github.com/kriscfoster/d3-barchart, last accessed 2021-04-18*/
 
     // Group and count instances by region 
     const data_bar = d3.nest()
@@ -117,7 +117,7 @@ d3.csv(dataPath).then(function(data) {
 
     /* Bar Chart - End*/
 
-    /* Circular Chart - https://www.d3-graph-gallery.com/graph/circular_barplot_label.html */
+    /* Circular Chart - Start, adapted from https://www.d3-graph-gallery.com/graph/circular_barplot_label.html, last accessed 2021-04-18  */
 
     const c_margin = { top: 130, right: 0, bottom: 0, left: 0 },
         c_width = 660 - c_margin.left - c_margin.right,
@@ -181,7 +181,7 @@ d3.csv(dataPath).then(function(data) {
 
     /* Circular Chart - End */
 
-    /* Lollipop Chart - Start https://www.d3-graph-gallery.com/graph/lollipop_basic.html */
+    /* Lollipop Chart - Start, adapted from https://www.d3-graph-gallery.com/graph/lollipop_basic.html, last accessed 2021-04-18 */
     const margin_lol = { top: 10, right: 30, bottom: 90, left: 60 },
         width_lol = 700 - margin_lol.left - margin_lol.right,
         height_lol = 580 - margin_lol.top - margin_lol.bottom;
@@ -285,7 +285,7 @@ d3.csv(dataPath).then(function(data) {
     /* Lollipop Chart - End */
 
 
-    /* Line Graph - https://www.d3-graph-gallery.com/graph/line_brushZoom.html */
+    /* Line Graph - Start, adapted from https://www.d3-graph-gallery.com/graph/line_brushZoom.html, last accessed 2021-04-18 */
 
     const margin_line = { top: 20, right: 20, bottom: 90, left: 60 },
         width_line = 1400 - margin_line.left - margin_line.right,
@@ -584,7 +584,7 @@ d3.csv(dataPath).then(function(data) {
     /* Line Chart - End */
 });
 
-/* Handling Modals  https://www.w3schools.com/howto/howto_css_modals.asp */
+/* Handling Modals, adapted from  https://www.w3schools.com/howto/howto_css_modals.asp, last accessed 2021-04-18 */
 
 // Get the modal
 var modal = document.getElementById("info_modal");
