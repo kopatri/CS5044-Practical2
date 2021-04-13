@@ -129,41 +129,37 @@ i:hover {
 
 
 /* Modal Header */
-
 .modal-header {
     padding: 2px 16px;
-    background-color: #5cb85c;
+    background-color: #CB8C35;
     color: white;
 }
 
 
 /* Modal Body */
-
 .modal-body {
     padding: 2px 16px;
 }
 
 
 /* Modal Footer */
-
 .modal-footer {
     padding: 2px 16px;
-    background-color: #5cb85c;
+    background-color: #CB8C35;
     color: white;
     text-align: left;
 }
 
 
 /* Modal Content */
-
 .modal-content {
     position: relative;
     background-color: #fefefe;
     margin: auto;
-    margin-top: 200px;
+    margin-top: 100px;
     padding: 0;
-    border: 1px solid #888;
-    width: 80%;
+    border: 1px solid #CB8C35;
+    width: 60%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     animation-name: animatetop;
     animation-duration: 0.4s
@@ -171,7 +167,6 @@ i:hover {
 
 
 /* Add Animation */
-
 @keyframes animatetop {
     from {
         top: -300px;
@@ -183,9 +178,13 @@ i:hover {
     }
 }
 
+table, th, td {
+    border: 1px solid black;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
 
 /* Line Chart Styling */
-
 .line {
     fill: none;
     stroke-width: 1.5;
@@ -206,7 +205,6 @@ i:hover {
 
 
 /* Bar Chart Styling */
-
 .rect:hover {
     opacity: 0.5;
 }
