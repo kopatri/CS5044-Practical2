@@ -1,13 +1,13 @@
 const dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; // our data file	
 
-const showCountry = function () {
+const showCountry = function() {
     document.getElementById("bar").style.display = "none";
     document.getElementById("circular").style.display = "block"
     document.getElementById("button").innerText = "Show reports by region"
     document.getElementById("button").onclick = showRegion;
 }
 
-const showRegion = function () {
+const showRegion = function() {
     document.getElementById("bar").style.display = "block";
     document.getElementById("circular").style.display = "none"
     document.getElementById("button").innerText = "Show reports by country"
@@ -24,9 +24,9 @@ const tooltip = d3.select("body")
     .style("opacity", 0);
 
 // Get the data
-d3.csv(dataPath).then(function (data) {
+d3.csv(dataPath).then(function(data) {
     // format the data
-    data.forEach(function (d) {
+    data.forEach(function(d) {
         d.Incident_Date = parseTime(d.Incident_Date); //Change to Date
         d.Cheetahs_Number = +d.Cheetahs_Number; //change to int
         d.Cheetahs_Number = isNaN(d.Cheetahs_Number) ? null : d.Cheetahs_Number; // Change to null if it's not an integer
@@ -40,8 +40,8 @@ d3.csv(dataPath).then(function (data) {
 
     // Group and count instances by region 
     const data_bar = d3.nest()
-        .key(function (d) { return d.Region; })
-        .rollup(function (v) { return v.length; })
+        .key(function(d) { return d.Region; })
+        .rollup(function(v) { return v.length; })
         .entries(data);
 
     const margin_bar = { top: 10, right: 30, bottom: 90, left: 70 },
@@ -71,7 +71,7 @@ d3.csv(dataPath).then(function (data) {
 
     // Add Y axis
     const bar_y = d3.scaleLinear()
-        .domain([0, d3.max(data_bar, function (d) { return d.value; })])
+        .domain([0, d3.max(data_bar, function(d) { return d.value; })])
         .range([height_bar, 0]);
 
     bar_svg.append("g")
@@ -82,10 +82,10 @@ d3.csv(dataPath).then(function (data) {
         .data(data_bar)
         .enter()
         .append("rect")
-        .attr("x", function (d) { return bar_x(d.key); })
-        .attr("y", function (d) { return bar_y(d.value); })
+        .attr("x", function(d) { return bar_x(d.key); })
+        .attr("y", function(d) { return bar_y(d.value); })
         .attr("width", bar_x.bandwidth())
-        .attr("height", function (d) { return height_bar - bar_y(d.value); })
+        .attr("height", function(d) { return height_bar - bar_y(d.value); })
         .attr("fill", "green")
         .attr("class", "rect")
         .on('mouseover', d => {
@@ -126,8 +126,8 @@ d3.csv(dataPath).then(function (data) {
         outerRadius = Math.min(c_width, c_height) / 2;
 
     const nestedCountry = d3.nest()
-        .key(function (d) { return d.Country })
-        .rollup(function (v) { return v.length; })
+        .key(function(d) { return d.Country })
+        .rollup(function(v) { return v.length; })
         .entries(data);
     console.log(nestedCountry);
     nestedCountry.sort((a, b) => d3.descending(a.value, b.value));
@@ -144,10 +144,10 @@ d3.csv(dataPath).then(function (data) {
     const c_x = d3.scaleBand()
         .range([0, 2 * Math.PI]) // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
         .align(0) // This does nothing
-        .domain(nestedCountry.map(function (d) { return d.key; })); // The domain of the X axis is the list of states.
+        .domain(nestedCountry.map(function(d) { return d.key; })); // The domain of the X axis is the list of states.
     const c_y = d3.scaleRadial()
         .range([innerRadius, outerRadius]) // Domain will be define later.
-        .domain([0, d3.max(nestedCountry, function (d) { return d.value; })]); // Domain of Y is from 0 to the max seen in the data
+        .domain([0, d3.max(nestedCountry, function(d) { return d.value; })]); // Domain of Y is from 0 to the max seen in the data
 
     // Add the bars
     c_svg.append("g")
@@ -158,9 +158,9 @@ d3.csv(dataPath).then(function (data) {
         .attr("fill", "green")
         .attr("d", d3.arc()
             .innerRadius(innerRadius)
-            .outerRadius(function (d) { return c_y(d.value); })
-            .startAngle(function (d) { return c_x(d.key); })
-            .endAngle(function (d) { return c_x(d.key) + c_x.bandwidth(); })
+            .outerRadius(function(d) { return c_y(d.value); })
+            .startAngle(function(d) { return c_x(d.key); })
+            .endAngle(function(d) { return c_x(d.key) + c_x.bandwidth(); })
             .padAngle(0.01)
             .padRadius(innerRadius))
 
@@ -170,11 +170,11 @@ d3.csv(dataPath).then(function (data) {
         .data(nestedCountry)
         .enter()
         .append("g")
-        .attr("text-anchor", function (d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
-        .attr("transform", function (d) { return "rotate(" + ((c_x(d.key) + c_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (c_y(d.value) + 10) + ",0)"; })
+        .attr("text-anchor", function(d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+        .attr("transform", function(d) { return "rotate(" + ((c_x(d.key) + c_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (c_y(d.value) + 10) + ",0)"; })
         .append("text")
-        .text(function (d) { return (`${d.key} - ${d.value}`) })
-        .attr("transform", function (d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+        .text(function(d) { return (`${d.key} - ${d.value}`) })
+        .attr("transform", function(d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
         .style("font-size", "12px")
         .attr("alignment-baseline", "middle")
 
@@ -197,8 +197,8 @@ d3.csv(dataPath).then(function (data) {
         }*/
 
     const nestedMedium = d3.nest()
-        .key(function (d) { return d.Medium })
-        .rollup(function (v) { return v.length; })
+        .key(function(d) { return d.Medium })
+        .rollup(function(v) { return v.length; })
         .entries(data);
     console.log(nestedMedium);
 
@@ -227,7 +227,7 @@ d3.csv(dataPath).then(function (data) {
 
     // Add Y axis
     const lol_y = d3.scaleLinear()
-        .domain([0, d3.max(nestedMedium, function (d) { return d.value; })])
+        .domain([0, d3.max(nestedMedium, function(d) { return d.value; })])
         .range([height_lol, 0]);
 
     lol_svg.append("g")
@@ -238,9 +238,9 @@ d3.csv(dataPath).then(function (data) {
         .data(nestedMedium)
         .enter()
         .append("line")
-        .attr("x1", function (d) { return lol_x(d.key); })
-        .attr("x2", function (d) { return lol_x(d.key); })
-        .attr("y1", function (d) { return lol_y(d.value); })
+        .attr("x1", function(d) { return lol_x(d.key); })
+        .attr("x2", function(d) { return lol_x(d.key); })
+        .attr("y1", function(d) { return lol_y(d.value); })
         .attr("y2", lol_y(0))
         .attr("stroke", "purple");
 
@@ -249,8 +249,8 @@ d3.csv(dataPath).then(function (data) {
         .data(nestedMedium)
         .enter()
         .append("circle")
-        .attr("cx", function (d) { return lol_x(d.key); })
-        .attr("cy", function (d) { return lol_y(d.value); })
+        .attr("cx", function(d) { return lol_x(d.key); })
+        .attr("cy", function(d) { return lol_y(d.value); })
         .attr("r", "4")
         .style("fill", "#69b3a2")
         .attr("stroke", "black")
@@ -322,7 +322,7 @@ d3.csv(dataPath).then(function (data) {
     // Set the ranges for the data
     const x = d3.scaleTime()
         .range([0, width_line])
-        .domain(d3.extent(Cheetahs_NumberTotal, function (d) { return new Date(d.key); }));
+        .domain(d3.extent(Cheetahs_NumberTotal, function(d) { return new Date(d.key); }));
 
     const y = d3.scaleLinear()
         .range([height_line, 0])
@@ -331,7 +331,7 @@ d3.csv(dataPath).then(function (data) {
     // Draw the X Axis
     const xScale = line_svg.append("g")
 
-        .attr("transform", "translate(0," + height_line + ")")
+    .attr("transform", "translate(0," + height_line + ")")
         .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
 
     xScale.selectAll("text")
@@ -396,8 +396,8 @@ d3.csv(dataPath).then(function (data) {
         .attr("class", "circle")
         .attr("fill", "red")
         .attr("stroke", "none")
-        .attr("cx", function (d) { return x(new Date(d.key)) })
-        .attr("cy", function (d) { return y(d.value) })
+        .attr("cx", function(d) { return x(new Date(d.key)) })
+        .attr("cy", function(d) { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -420,8 +420,8 @@ d3.csv(dataPath).then(function (data) {
         .attr("class", "circle")
         .attr("fill", "blue")
         .attr("stroke", "none")
-        .attr("cx", function (d) { return x(new Date(d.key)) })
-        .attr("cy", function (d) { return y(d.value) })
+        .attr("cx", function(d) { return x(new Date(d.key)) })
+        .attr("cy", function(d) { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -435,8 +435,8 @@ d3.csv(dataPath).then(function (data) {
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
             //.defined(d => { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing 0 (is not needed for nested data)
-            .x(function (d) { return x(new Date(d.key)) })
-            .y(function (d) { return y(d.value) })
+            .x(function(d) { return x(new Date(d.key)) })
+            .y(function(d) { return y(d.value) })
         )
 
     // Draw the circles
@@ -447,8 +447,8 @@ d3.csv(dataPath).then(function (data) {
         .attr("class", "circle")
         .attr("fill", "black")
         .attr("stroke", "none")
-        .attr("cx", function (d) { return x(new Date(d.key)) })
-        .attr("cy", function (d) { return y(d.value) })
+        .attr("cx", function(d) { return x(new Date(d.key)) })
+        .attr("cy", function(d) { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -489,21 +489,21 @@ d3.csv(dataPath).then(function (data) {
 
         totalLine.select('.line')
             .attr("d", d3.line()
-                .x(function (d) { return x(new Date(d.key)) })
-                .y(function (d) { return y(d.value) })
+                .x(function(d) { return x(new Date(d.key)) })
+                .y(function(d) { return y(d.value) })
             )
 
         circles.selectAll(".circle")
-            .attr("cx", function (d) { return x(new Date(d.key)) })
-            .attr("cy", function (d) { return y(d.value) })
+            .attr("cx", function(d) { return x(new Date(d.key)) })
+            .attr("cy", function(d) { return y(d.value) })
             .attr("r", 3)
             .on('mouseover', d => showTip(d))
             .on('mouseout', () => { tooltip.style('opacity', 0); });
     }
 
     // Reset chart when double clicking
-    line_svg.on("dblclick", function () {
-        x.domain(d3.extent(Cheetahs_NumberTotal, function (d) { return new Date(d.key); }));
+    line_svg.on("dblclick", function() {
+        x.domain(d3.extent(Cheetahs_NumberTotal, function(d) { return new Date(d.key); }));
         xScale.call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
             .selectAll("text")
             .attr("dx", "-0.5em")
@@ -519,13 +519,13 @@ d3.csv(dataPath).then(function (data) {
 
         line_svg.select('.line')
             .attr("d", d3.line()
-                .x(function (d) { return x(new Date(d.key)) })
-                .y(function (d) { return y(d.value) })
+                .x(function(d) { return x(new Date(d.key)) })
+                .y(function(d) { return y(d.value) })
             )
 
         circles.selectAll(".circle")
-            .attr("cx", function (d) { return x(new Date(d.key)) })
-            .attr("cy", function (d) { return y(d.value) })
+            .attr("cx", function(d) { return x(new Date(d.key)) })
+            .attr("cy", function(d) { return y(d.value) })
             .attr("r", 3)
             .on('mouseover', d => showTip(d))
             .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -590,13 +590,13 @@ d3.csv(dataPath).then(function (data) {
 var modal = document.getElementById("info_modal");
 
 // When the user clicks on the information icon, open the modal
-const openModal = function (element) {
+const openModal = function(element) {
     applyModalText(element.id);
     modal.style.display = "block";
 }
 
 //Apply modal text accordingly to the correspoding information icon
-const applyModalText = function (modal) {
+const applyModalText = function(modal) {
     let header, body, footer = "";
     if (modal == "info_location") {
         header = "Additional information about reports linked to location";
@@ -614,7 +614,7 @@ const applyModalText = function (modal) {
         </ul>
         `;
     } else if (modal == "info_media") {
-        header = "Additional information about reports linked to media";
+        header = "Additional information about the sources of the reports";
         body = `
         <p>The sources of reports were heavily concentrated with most trades found through the internet.</p>
         <p>Subsequently, the table contains information about the different media types:</p>
@@ -633,35 +633,35 @@ const applyModalText = function (modal) {
             </tr>
             <tr>
                 <td>Email</td>
-                <td>Reports that are communicated via Emails.</td>
+                <td>Reports that were communicated via Emails.</td>
             </tr>
             <tr>
                 <td>Phone App</td>
-                <td>Reports that are published on applications not related to social media.</td>
+                <td>Applications such as Skype/WhatsApp or others not related to social media.</td>
             </tr>
             <tr>
                 <td>Website</td>
-                <td>Reports that are published on public accessible websites.</td>
+                <td>Reports that were published on public accessible websites.</td>
             </tr>
             <tr>
-                <td>Website</td>
-                <td>Incidents that are announced in public reports.</td>
+                <td>Report</td>
+                <td>Incidents that were announced in public reports.</td>
             </tr>
             <tr>
                 <td>Media</td>
-                <td>Reports that are transmitted on television or newspapers.</td>
+                <td>Reports that were transmitted on television or newspapers.</td>
             </tr>
             <tr>
                 <td>Database</td>
                 <td>Reports that were already identified by existing databases.</td>
             </tr>
             <tr>
-                <td>NGO</td>
-                <td>Reports that are discovered by Non-Governmental-Organisations (NGO).</td>
+                <td>NGO Research</td>
+                <td>Reports that were discovered by Non-Governmental-Organisations (NGO).</td>
             </tr>
             <tr>
                 <td>Direct</td>
-                <td>Incidents were the publisher of the data set of directly contacted by sellers of cheetahs.</td>
+                <td>Sellars of cheetahs directly directly contacted publisher of the dataset.</td>
             </tr>
             <tr>
                 <td>Newsletter</td>
@@ -677,7 +677,7 @@ const applyModalText = function (modal) {
             </tr>
             <tr>
                 <td>Blog</td>
-                <td>Reports published in blogs by volunteers.</td>
+                <td>Published in blogs by volunteers.</td>
             </tr>
             <tr>
                 <td>Invoice</td>
@@ -693,8 +693,8 @@ const applyModalText = function (modal) {
         body = `
         <ul>
             <li>The timeline shows an overview of the number of cheetahs reported over ten years.</li>
-            <li>Zooming into these spikes, one can see that these always happen in the last quarter of the year, before December, possibly indicating a surge in buying cheetahs or cheetah products for the winter holidays.</li>
-            <li>Furthermore, positive upswings in found cheetahs is often linked to an upswing in cheetahs reported dead, suggesting cases with many dead cheetah body parts reported .</li>
+            <li>Most spikes in the number of cheetahs were recorded in the last quarter of the year, before December, possibly indicating a surge in buying cheetahs or cheetah products for the winter holidays.</li>
+            <li>Positive upswings in found cheetahs is often linked to an upswing in cheetahs reported dead, suggesting cases with many dead cheetah body parts reported.</li>
         </ul>
         `;
     }
@@ -709,12 +709,12 @@ var btn = document.getElementById("myBtn");
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function () {
+span.onclick = function() {
     modal.style.display = "none";
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
+window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }

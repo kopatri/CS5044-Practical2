@@ -2,6 +2,7 @@
 
 * {
     font-family: Arial, Helvetica, sans-serif;
+    color: #333
 }
 
 #visualisation {
@@ -37,7 +38,6 @@ h2 {
 }
 
 .axis-label {
-    color: darkslategray;
     font-size: 20px;
 }
 
@@ -129,34 +129,37 @@ i:hover {
 
 
 /* Modal Header */
+
 .modal-header {
     padding: 2px 16px;
-    background-color: #CB8C35;
-    color: white;
+    background-color: #DDAA36;
+    color: #333;
 }
 
 
 /* Modal Body */
+
 .modal-body {
     padding: 2px 16px;
 }
 
 
 /* Modal Footer */
+
 .modal-footer {
     padding: 2px 16px;
-    background-color: #CB8C35;
-    color: white;
+    background-color: #DDAA36;
+    color: #03050F;
     text-align: left;
 }
 
 
 /* Modal Content */
+
 .modal-content {
     position: relative;
-    background-color: #fefefe;
-    margin: auto;
-    margin-top: 100px;
+    background-color: #FAF9F9;
+    margin: 15% auto;
     padding: 0;
     border: 1px solid #CB8C35;
     width: 60%;
@@ -167,6 +170,7 @@ i:hover {
 
 
 /* Add Animation */
+
 @keyframes animatetop {
     from {
         top: -300px;
@@ -178,13 +182,18 @@ i:hover {
     }
 }
 
-table, th, td {
+table,
+th,
+td {
     border: 1px solid black;
     margin-top: 5px;
     margin-bottom: 10px;
-  }
+    padding: 5px;
+}
+
 
 /* Line Chart Styling */
+
 .line {
     fill: none;
     stroke-width: 1.5;
@@ -205,6 +214,7 @@ table, th, td {
 
 
 /* Bar Chart Styling */
+
 .rect:hover {
     opacity: 0.5;
 }
