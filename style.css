@@ -1,60 +1,16 @@
-/* General Styling */
+/* General Page Styling */
 
 * {
     font-family: Arial, Helvetica, sans-serif;
     color: #333
 }
 
-#visualisation {
-    display: grid;
-    grid-template-columns: 750px 750px;
-    grid-template-rows: auto auto
+body {
+    background-color: linen;
 }
 
-#location {
-    grid-column: 1/1;
-    grid-row: 1/1;
-}
-
-.x-axis {
-    font-size: 14px;
-}
-
-svg {
-    margin-top: 15px;
-}
-
-#media {
-    grid-column: 2/2;
-    grid-row: 1/1
-}
-
-h2 {
-    display: inline;
-}
-
-#circular {
-    display: none;
-}
-
-.axis-label {
-    font-size: 20px;
-}
-
-.tooltip {
-    position: absolute;
-    text-align: center;
-    width: 100px;
-    padding: 2px;
-    font: 12px sans-serif;
-    background: lightsteelblue;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-}
-
-.tick>text {
-    font-size: 12px;
+h1 {
+    margin-top: 0px;
 }
 
 header,
@@ -67,7 +23,6 @@ footer {
 
 header {
     text-align: center;
-    margin-bottom: 5px;
 }
 
 header>p {
@@ -87,8 +42,27 @@ p {
     margin: 0 0 0px;
 }
 
-body {
-    background-color: linen;
+
+/* Visualisation styling */
+
+#visualisation {
+    display: grid;
+    grid-template-columns: 750px 750px;
+    grid-template-rows: auto auto
+}
+
+#location {
+    grid-column: 1/1;
+    grid-row: 1/1;
+}
+
+#media {
+    grid-column: 2/2;
+    grid-row: 1/1
+}
+
+#circular {
+    display: none;
 }
 
 #location,
@@ -100,11 +74,42 @@ body {
     margin-left: 30px
 }
 
-.icon-info-sign {
-    font-size: 30px;
+svg {
+    margin-top: 15px;
 }
 
-#button {
+h2 {
+    display: inline;
+}
+
+.x-axis {
+    font-size: 14px;
+}
+
+.tick>text {
+    font-size: 12px;
+}
+
+.axis-label {
+    font-size: 20px;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+
+/* Swap graphs button */
+
+#swap {
     background-color: #CB8C35;
     color: #000407;
     border: none;
@@ -115,8 +120,15 @@ body {
     margin-bottom: 15px;
 }
 
-#button:hover {
+#swap:hover {
     color: #FAF9F9;
+}
+
+
+/* Info button */
+
+.icon-info-sign {
+    font-size: 30px;
 }
 
 i:hover {
@@ -127,24 +139,15 @@ i:hover {
 
 /*Modal Styling, adapted from https://www.w3schools.com/howto/howto_css_modals.asp, last accessed 2021-04-18  */
 
-
-/* Modal Header */
-
 .modal-header {
     padding: 2px 16px;
     background-color: #DDAA36;
     color: #333;
 }
 
-
-/* Modal Body */
-
 .modal-body {
     padding: 2px 16px;
 }
-
-
-/* Modal Footer */
 
 .modal-footer {
     padding: 2px 16px;
@@ -152,9 +155,6 @@ i:hover {
     color: #03050F;
     text-align: left;
 }
-
-
-/* Modal Content */
 
 .modal-content {
     position: relative;

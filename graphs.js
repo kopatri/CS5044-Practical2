@@ -3,15 +3,15 @@ const dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; /
 const showCountry = function() {
     document.getElementById("bar").style.display = "none";
     document.getElementById("circular").style.display = "block"
-    document.getElementById("button").innerText = "Show reports by region"
-    document.getElementById("button").onclick = showRegion;
+    document.getElementById("swap").innerText = "Show reports by region"
+    document.getElementById("swap").onclick = showRegion;
 }
 
 const showRegion = function() {
     document.getElementById("bar").style.display = "block";
     document.getElementById("circular").style.display = "none"
-    document.getElementById("button").innerText = "Show reports by country"
-    document.getElementById("button").onclick = showCountry;
+    document.getElementById("swap").innerText = "Show reports by country"
+    document.getElementById("swap").onclick = showCountry;
 }
 
 // parse the date / time
