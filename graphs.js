@@ -112,7 +112,7 @@ d3.csv(dataPath).then(function(data) {
         .attr("x", 0 - (height_bar / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Number of reports");
+        .text("Number of Reports");
 
 
     /* Bar Chart - End*/
