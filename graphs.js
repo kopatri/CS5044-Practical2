@@ -78,7 +78,7 @@ d3.csv(dataPath).then(function(data) {
     bar_svg.append("g")
         .call(d3.axisLeft(bar_y));
 
-    //Draw bar
+    // Draw bars
     bar_svg.selectAll("bars")
         .data(data_bar)
         .enter()
@@ -126,9 +126,10 @@ d3.csv(dataPath).then(function(data) {
         innerRadius = 90,
         outerRadius = Math.min(c_width, c_height) / 2;
 
+    // Group and count reports by country
     const nestedCountry = d3.nest()
-        .key(function(d) { return d.Country })
-        .rollup(function(v) { return v.length; })
+        .key(d => { return d.Country })
+        .rollup(v => { return v.length; })
         .entries(data);
     console.log(nestedCountry);
     nestedCountry.sort((a, b) => d3.descending(a.value, b.value));
@@ -143,11 +144,11 @@ d3.csv(dataPath).then(function(data) {
 
     // Scales
     const c_x = d3.scaleBand()
-        .range([0, 2 * Math.PI]) // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
-        .align(0) // This does nothing
-        .domain(nestedCountry.map(function(d) { return d.key; })); // The domain of the X axis is the list of states.
+        .range([0, 2 * Math.PI]) // X axis goes from 0 to 2pi = all around the circle. 
+        .align(0)
+        .domain(nestedCountry.map(function(d) { return d.key; })); // The domain of the X axis is the list of countries.
     const c_y = d3.scaleRadial()
-        .range([innerRadius, outerRadius]) // Domain will be define later.
+        .range([innerRadius, outerRadius])
         .domain([0, d3.max(nestedCountry, function(d) { return d.value; })]); // Domain of Y is from 0 to the max seen in the data
 
     // Add the bars
@@ -159,9 +160,9 @@ d3.csv(dataPath).then(function(data) {
         .attr("fill", "green")
         .attr("d", d3.arc()
             .innerRadius(innerRadius)
-            .outerRadius(function(d) { return c_y(d.value); })
-            .startAngle(function(d) { return c_x(d.key); })
-            .endAngle(function(d) { return c_x(d.key) + c_x.bandwidth(); })
+            .outerRadius(d => { return c_y(d.value); })
+            .startAngle(d => { return c_x(d.key); })
+            .endAngle(d => { return c_x(d.key) + c_x.bandwidth(); })
             .padAngle(0.01)
             .padRadius(innerRadius))
 
@@ -171,11 +172,11 @@ d3.csv(dataPath).then(function(data) {
         .data(nestedCountry)
         .enter()
         .append("g")
-        .attr("text-anchor", function(d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
-        .attr("transform", function(d) { return "rotate(" + ((c_x(d.key) + c_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (c_y(d.value) + 10) + ",0)"; })
+        .attr("text-anchor", d => { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+        .attr("transform", d => { return "rotate(" + ((c_x(d.key) + c_x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (c_y(d.value) + 10) + ",0)"; })
         .append("text")
-        .text(function(d) { return (`${d.key} - ${d.value}`) })
-        .attr("transform", function(d) { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+        .text(d => { return (`${d.key} - ${d.value}`) })
+        .attr("transform", d => { return (c_x(d.key) + c_x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
         .style("font-size", "12px")
         .attr("alignment-baseline", "middle")
 
@@ -187,7 +188,7 @@ d3.csv(dataPath).then(function(data) {
         width_lol = 700 - margin_lol.left - margin_lol.right,
         height_lol = 580 - margin_lol.top - margin_lol.bottom;
 
-    /*Code to group all media apart from the top 5 in "Others"
+    /*Code to group all media apart from the top 5 sources into "Others"
       const Medium = ["Social Media", "eCommerce", "Email", "Phone App", "Web site", "Others"];
       const others = [];
         //Use the following block in the .key function
@@ -197,9 +198,10 @@ d3.csv(dataPath).then(function(data) {
             return "Others";
         }*/
 
+    // Group by source
     const nestedMedium = d3.nest()
-        .key(function(d) { return d.Medium })
-        .rollup(function(v) { return v.length; })
+        .key(d => { return d.Medium })
+        .rollup(v => { return v.length; })
         .entries(data);
     console.log(nestedMedium);
 
@@ -209,9 +211,9 @@ d3.csv(dataPath).then(function(data) {
         .attr("width", width_lol + margin_lol.left + margin_lol.right)
         .attr("height", height_lol + margin_lol.top + margin_lol.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin_lol.left + "," + margin_lol.top + ")");
+        .attr("transform", `translate(${margin_lol.left}, ${margin_lol.top})`);
 
-    // X axis
+    // Add X axis
     const lol_x = d3.scaleBand()
         .range([0, width_lol])
         .domain(nestedMedium.sort((a, b) => d3.descending(a.value, b.value))
@@ -239,9 +241,9 @@ d3.csv(dataPath).then(function(data) {
         .data(nestedMedium)
         .enter()
         .append("line")
-        .attr("x1", function(d) { return lol_x(d.key); })
-        .attr("x2", function(d) { return lol_x(d.key); })
-        .attr("y1", function(d) { return lol_y(d.value); })
+        .attr("x1", d => { return lol_x(d.key); })
+        .attr("x2", d => { return lol_x(d.key); })
+        .attr("y1", d => { return lol_y(d.value); })
         .attr("y2", lol_y(0))
         .attr("stroke", "purple");
 
@@ -250,8 +252,8 @@ d3.csv(dataPath).then(function(data) {
         .data(nestedMedium)
         .enter()
         .append("circle")
-        .attr("cx", function(d) { return lol_x(d.key); })
-        .attr("cy", function(d) { return lol_y(d.value); })
+        .attr("cx", d => { return lol_x(d.key); })
+        .attr("cy", d => { return lol_y(d.value); })
         .attr("r", "4")
         .style("fill", "#69b3a2")
         .attr("stroke", "black")
@@ -323,16 +325,15 @@ d3.csv(dataPath).then(function(data) {
     // Set the ranges for the data
     const x = d3.scaleTime()
         .range([0, width_line])
-        .domain(d3.extent(Cheetahs_NumberTotal, function(d) { return new Date(d.key); }));
+        .domain(d3.extent(Cheetahs_NumberTotal, d => { return new Date(d.key); }));
 
     const y = d3.scaleLinear()
         .range([height_line, 0])
-        .domain([0, d3.max(Cheetahs_NumberTotal, d => { return d.value; })]);
+        .domain([0, (d3.max(Cheetahs_NumberTotal, d => { return d.value; })) + 5]);
 
     // Draw the X Axis
     const xScale = line_svg.append("g")
-
-    .attr("transform", "translate(0," + height_line + ")")
+        .attr("transform", `translate(0, ${height_line})`)
         .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
 
     xScale.selectAll("text")
@@ -347,7 +348,7 @@ d3.csv(dataPath).then(function(data) {
         .call(d3.axisLeft(y));
 
     // Create clip area in which lines will be drawn
-    var clip = line_svg.append("defs").append("svg:clipPath")
+    const clip = line_svg.append("defs").append("svg:clipPath")
         .attr("id", "clip")
         .append("svg:rect")
         .attr("width", width_line)
@@ -356,7 +357,7 @@ d3.csv(dataPath).then(function(data) {
         .attr("y", 0);
 
     // Create the brushing area
-    var brush = d3.brushX()
+    const brush = d3.brushX()
         .extent([
             [0, 0],
             [width_line, height_line]
@@ -364,13 +365,13 @@ d3.csv(dataPath).then(function(data) {
         .on("end", updateChart) // Once selected, update all data points
 
     // Create the variables where the brushing and clipping takes place on the line/area/circles
-    var totalLine = line_svg.append('g')
+    const totalLine = line_svg.append('g')
         .attr("clip-path", "url(#clip)")
 
-    var area = line_svg.append('g')
+    const area = line_svg.append('g')
         .attr("clip-path", "url(#clip)")
 
-    var circles = line_svg.append('g')
+    const circles = line_svg.append('g')
         .attr("clip-path", "url(#clip)")
 
     // Add the brushing - brushing only needs to be appended to one object. The others will still update in the function
@@ -397,8 +398,8 @@ d3.csv(dataPath).then(function(data) {
         .attr("class", "circle")
         .attr("fill", "red")
         .attr("stroke", "none")
-        .attr("cx", function(d) { return x(new Date(d.key)) })
-        .attr("cy", function(d) { return y(d.value) })
+        .attr("cx", d => { return x(new Date(d.key)) })
+        .attr("cy", d => { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -421,13 +422,13 @@ d3.csv(dataPath).then(function(data) {
         .attr("class", "circle")
         .attr("fill", "blue")
         .attr("stroke", "none")
-        .attr("cx", function(d) { return x(new Date(d.key)) })
-        .attr("cy", function(d) { return y(d.value) })
+        .attr("cx", d => { return x(new Date(d.key)) })
+        .attr("cy", d => { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
 
-    // Draw the line
+    // Draw the line for total cheetahs
     totalLine.append("path")
         .datum(Cheetahs_NumberTotal)
         .attr("class", "line")
@@ -435,9 +436,9 @@ d3.csv(dataPath).then(function(data) {
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
-            //.defined(d => { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing 0 (is not needed for nested data)
-            .x(function(d) { return x(new Date(d.key)) })
-            .y(function(d) { return y(d.value) })
+            //.defined(d => { return d.Cheetahs_Number != null; })  // Ignores null values instead of showing 0 (not needed for nested data)
+            .x(d => { return x(new Date(d.key)) })
+            .y(d => { return y(d.value) })
         )
 
     // Draw the circles
@@ -448,8 +449,8 @@ d3.csv(dataPath).then(function(data) {
         .attr("class", "circle")
         .attr("fill", "black")
         .attr("stroke", "none")
-        .attr("cx", function(d) { return x(new Date(d.key)) })
-        .attr("cy", function(d) { return y(d.value) })
+        .attr("cx", d => { return x(new Date(d.key)) })
+        .attr("cy", d => { return y(d.value) })
         .attr("r", 3)
         .on('mouseover', d => showTip(d))
         .on('mouseout', () => { tooltip.style('opacity', 0); });
@@ -463,15 +464,15 @@ d3.csv(dataPath).then(function(data) {
     function updateChart() {
 
         // What are the selected boundaries?
-        extent = d3.event.selection
+        extent = d3.event.selection;
 
         // If no selection, back to initial coordinate. Otherwise, update X axis domain
         if (!extent) {
             if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-            x.domain([4, 8])
+            x.domain([4, 8]);
         } else {
-            x.domain([x.invert(extent[0]), x.invert(extent[1])])
-            totalLine.select(".brush").call(brush.move, null) // This removes the grey brush area as soon as the selection has been done
+            x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+            totalLine.select(".brush").call(brush.move, null); // This removes the grey brush area as soon as the selection has been done
         }
 
         // Update axis and line/area/circles position
@@ -490,20 +491,21 @@ d3.csv(dataPath).then(function(data) {
 
         totalLine.select('.line')
             .attr("d", d3.line()
-                .x(function(d) { return x(new Date(d.key)) })
-                .y(function(d) { return y(d.value) })
+                .x(d => { return x(new Date(d.key)); })
+                .y(d => { return y(d.value); })
             )
 
         circles.selectAll(".circle")
-            .attr("cx", function(d) { return x(new Date(d.key)) })
-            .attr("cy", function(d) { return y(d.value) })
+            .attr("cx", d => { return x(new Date(d.key)); })
+            .attr("cy", d => { return y(d.value); })
             .attr("r", 3)
             .on('mouseover', d => showTip(d))
             .on('mouseout', () => { tooltip.style('opacity', 0); });
     }
 
-    var reset = function() {
-        x.domain(d3.extent(Cheetahs_NumberTotal, function(d) { return new Date(d.key); }));
+    // Function to show original timeline
+    const reset = function() {
+        x.domain(d3.extent(Cheetahs_NumberTotal, d => { return new Date(d.key); }));
         xScale.call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
             .selectAll("text")
             .attr("dx", "-0.5em")
@@ -519,19 +521,19 @@ d3.csv(dataPath).then(function(data) {
 
         line_svg.select('.line')
             .attr("d", d3.line()
-                .x(function(d) { return x(new Date(d.key)) })
-                .y(function(d) { return y(d.value) })
+                .x(d => { return x(new Date(d.key)); })
+                .y(d => { return y(d.value); })
             )
 
         circles.selectAll(".circle")
-            .attr("cx", function(d) { return x(new Date(d.key)) })
-            .attr("cy", function(d) { return y(d.value) })
+            .attr("cx", d => { return x(new Date(d.key)); })
+            .attr("cy", d => { return y(d.value); })
             .attr("r", 3)
             .on('mouseover', d => showTip(d))
             .on('mouseout', () => { tooltip.style('opacity', 0); });
     };
 
-    // Reset chart when double clicking or clicking on 'reset' (for touchscreens)
+    // Reset chart when double clicking or when clicking on 'reset' (for touchscreens)
     line_svg.on("dblclick", reset);
     document.getElementById("reset").onclick = reset;
 
@@ -591,7 +593,7 @@ d3.csv(dataPath).then(function(data) {
 /* Handling Modals, adapted from  https://www.w3schools.com/howto/howto_css_modals.asp, last accessed 2021-04-18 */
 
 // Get the modal
-var modal = document.getElementById("info_modal");
+const modal = document.getElementById("info_modal");
 
 // When the user clicks on the information icon, open the modal
 const openModal = function(element) {
@@ -707,10 +709,10 @@ const applyModalText = function(modal) {
 }
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+const btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+const span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
