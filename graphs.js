@@ -1,5 +1,6 @@
 const dataPath = "data/Tricorache_et_al_Global_trade_dataset_for_cheetah.csv"; // our data file	
 
+// Swap charts button
 const showCountry = function() {
     document.getElementById("bar").style.display = "none";
     document.getElementById("circular").style.display = "block"
@@ -501,8 +502,7 @@ d3.csv(dataPath).then(function(data) {
             .on('mouseout', () => { tooltip.style('opacity', 0); });
     }
 
-    // Reset chart when double clicking
-    line_svg.on("dblclick", function() {
+    var reset = function() {
         x.domain(d3.extent(Cheetahs_NumberTotal, function(d) { return new Date(d.key); }));
         xScale.call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d-%b-%Y")))
             .selectAll("text")
@@ -529,7 +529,11 @@ d3.csv(dataPath).then(function(data) {
             .attr("r", 3)
             .on('mouseover', d => showTip(d))
             .on('mouseout', () => { tooltip.style('opacity', 0); });
-    });
+    };
+
+    // Reset chart when double clicking or clicking on 'reset' (for touchscreens)
+    line_svg.on("dblclick", reset);
+    document.getElementById("reset").onclick = reset;
 
     // Function to show tooltip for line/area graph
     function showTip(d) {

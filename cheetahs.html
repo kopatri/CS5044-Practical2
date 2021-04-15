@@ -7,12 +7,14 @@
     <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
+    <!--Our Styling-->
+    <link href="style.css" rel="stylesheet">
+
     <!-- Function for circular bar chart -->
     <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
 
     <!-- we want to use D3, so this is where the D3 library version 5 gets called-->
     <script src="https://d3js.org/d3.v5.js"></script>
-    <link href="style.css" rel="stylesheet">
 
     <!--title of the webpage-->
     <title>Illegal Cheetah Trade</title>
@@ -22,8 +24,9 @@
 <body>
     <header>
         <h1>Illegal Cheetah Trade (2010-2019)</h1>
-        <p>This visualisation presents data from ten years (2010-2019) of illegal cheetah trade. The dataset records trades of live cheetahs and cheetah body parts, such as skin and skulls. The global number of cheetahs has reduced drastically over the last
-            century. As an endagered species, trade of wild cheetahs and cheetah parts is banned. However, covert illegal trades still occur. More information about the dataset can be found <a href="https://doi.org/10.1016/j.dib.2021.106848" target="_blank">here</a>.</p>
+        <p>This visualisation presents data from ten years (2010-2019) of illegal cheetah trade. The dataset records trades of live cheetahs and cheetah body parts, such as skin and skulls. The global number of cheetahs in the wild has reduced drastically
+            over the last century. As an endagered species, trade of wild cheetahs and cheetah parts is banned. However, covert illegal trades still occur. <br>More information about the dataset can be found <a href="https://doi.org/10.1016/j.dib.2021.106848"
+                target="_blank"><strong>here</strong></a>.</p>
     </header>
 
     <div id="visualisation">
@@ -44,7 +47,7 @@
         <div id="quantity">
             <h2>How many cheetahs were found?</h2>
             <i class="icon-info-sign" id="info_quantity" onclick="openModal(this)"></i>
-            <p>Click and drag on the graph to select a period for more detail. Double click to reset the graph.</p>
+            <p>Click and drag on the graph to select a period for more detail. Double click to <span id="reset"><u>reset</u></span> the graph.</p>
             <div id="line"> </div>
         </div>
     </div>
