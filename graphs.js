@@ -384,6 +384,7 @@ d3.csv(dataPath).then(function(data) {
     area.append("path")
         .datum(DiedTotal)
         .attr("class", "area")
+        .attr("id", "diedArea")
         .style("stroke", "red")
         .style("fill", "red")
         .attr("d", d3.area()
@@ -395,7 +396,7 @@ d3.csv(dataPath).then(function(data) {
         .data(DiedTotal)
         .enter()
         .append("circle")
-        .attr("class", "circle")
+        .attr("class", "circle diedCircles")
         .attr("fill", "red")
         .attr("stroke", "none")
         .attr("cx", d => { return x(new Date(d.key)) })
@@ -408,6 +409,7 @@ d3.csv(dataPath).then(function(data) {
     area.append("path")
         .data([AliveTotal])
         .attr("class", "area")
+        .attr("id", "aliveArea")
         .style("stroke", "blue")
         .style("fill", "blue")
         .attr("d", d3.area()
@@ -419,7 +421,7 @@ d3.csv(dataPath).then(function(data) {
         .data(AliveTotal)
         .enter()
         .append("circle")
-        .attr("class", "circle")
+        .attr("class", "circle aliveCircles")
         .attr("fill", "blue")
         .attr("stroke", "none")
         .attr("cx", d => { return x(new Date(d.key)) })
@@ -432,6 +434,7 @@ d3.csv(dataPath).then(function(data) {
     totalLine.append("path")
         .datum(Cheetahs_NumberTotal)
         .attr("class", "line")
+        .attr("id", "totLine")
         .attr("fill", "none")
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
@@ -446,7 +449,7 @@ d3.csv(dataPath).then(function(data) {
         .data(Cheetahs_NumberTotal)
         .enter()
         .append("circle")
-        .attr("class", "circle")
+        .attr("class", "circle totalCircles")
         .attr("fill", "black")
         .attr("stroke", "none")
         .attr("cx", d => { return x(new Date(d.key)) })
@@ -565,26 +568,55 @@ d3.csv(dataPath).then(function(data) {
         .style("text-anchor", "middle")
         .text("Number of Cheetahs");
 
+    // Function to swap visibility of area/line charts
+    const hideChart = function(chart) {
+        if (chart === "Dead") {
+            let visible = diedArea.active ? false : true;
+            changeTo = visible ? "hidden" : "visible";
+            d3.select("#diedArea").style("visibility", changeTo);
+            d3.selectAll(".diedCircles").style("visibility", changeTo);
+            diedArea.active = visible;
+        } else if (chart === "Alive") {
+            let visible = aliveArea.active ? false : true;
+            changeTo = visible ? "hidden" : "visible";
+            d3.select("#aliveArea").style("visibility", changeTo);
+            d3.selectAll(".aliveCircles").style("visibility", changeTo);
+            aliveArea.active = visible;
+        } else {
+            let visible = totLine.active ? false : true;
+            changeTo = visible ? "hidden" : "visible";
+            d3.select("#totLine").style("visibility", changeTo);
+            d3.selectAll(".totalCircles").style("visibility", changeTo);
+            totLine.active = visible;
+        }
+    }
+
     // Add legends						
     line_svg.append("text")
-        .attr("x", width_line - margin_line.left - 90)
-        .attr("y", margin_line.top + 10)
+        .attr("x", width_line - margin_line.left - 400)
+        .attr("y", margin_line.top - 20)
         .attr("class", "legend")
+        .attr("id", "totalLegend")
         .style("fill", "black")
+        .on("click", () => hideChart("Total"))
         .text("Total Cheetahs Found");
 
     line_svg.append("text")
-        .attr("x", width_line - margin_line.left - 35)
-        .attr("y", margin_line.top + 30)
+        .attr("x", width_line - margin_line.left - 190)
+        .attr("y", margin_line.top - 20)
         .attr("class", "legend")
+        .attr("id", "aliveLegend")
         .style("fill", "blue")
+        .on("click", () => hideChart("Alive"))
         .text("Reported Alive");
 
     line_svg.append("text")
         .attr("x", width_line - margin_line.left - 35)
-        .attr("y", margin_line.top + 50)
+        .attr("y", margin_line.top - 20)
         .attr("class", "legend")
+        .attr("id", "deadLegend")
         .style("fill", "red")
+        .on("click", () => hideChart("Dead"))
         .text("Reported Dead");
 
     /* Line Chart - End */
